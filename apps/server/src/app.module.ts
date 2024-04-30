@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RequestModule } from './request/request.module';
 import { IdempotencyModule } from './idempotency/idempotency.module';
 import { IdempotencyMiddleware } from './idempotency/idempotency.middleware';
+import { VaccinationModule } from './vaccination/vaccination.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { IdempotencyMiddleware } from './idempotency/idempotency.middleware';
     }),
     RequestModule,
     IdempotencyModule,
+    VaccinationModule,
   ],
 })
 export class AppModule {

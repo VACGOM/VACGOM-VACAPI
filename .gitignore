@@ -40,6 +40,6 @@ Thumbs.db
 
 .nx/cache
 
-server/.env
+apps/server/.env
 
 nx-cloud.env

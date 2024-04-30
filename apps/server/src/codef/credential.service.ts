@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { CodefTokenResponse } from './types/token/codef-token.response';
-import { CodefAccessTokenException } from './errors/CodefAccessTokenException';
+import { CodefAccessTokenException } from './exceptions/CodefAccessTokenException';
 import { RequestService } from '../request/types';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class CredentialService {
 
   constructor(
     @Inject('RequestService')
-    private requestService: RequestService,
+    private requestService: RequestService
   ) {
     this.clientId = process.env.CODEF_CLIENT_ID;
     this.clientSecret = process.env.CODEF_CLIENT_SECRET;
@@ -43,7 +43,7 @@ export class CredentialService {
             Authorization: `Basic ${this.getAuthString()}`,
             Accept: 'application/json',
           },
-        },
+        }
       );
 
       return response.data.access_token;
@@ -54,7 +54,7 @@ export class CredentialService {
 
   private getAuthString(): string {
     return Buffer.from(`${this.clientId}:${this.clientSecret}`).toString(
-      'base64',
+      'base64'
     );
   }
 }

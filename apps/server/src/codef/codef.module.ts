@@ -4,6 +4,7 @@ import { CredentialService } from './credential.service';
 import { CodefController } from './codef.controller';
 import { CodefRequestService } from './request.service';
 import { CommonRequestService } from '../request/request.service';
+import { CodefVaccinationFetcher } from './vaccination/codef-vaccination-fetcher';
 
 @Module({
   providers: [
@@ -17,7 +18,9 @@ import { CommonRequestService } from '../request/request.service';
       provide: 'RequestService',
       useClass: CommonRequestService,
     },
+    CodefVaccinationFetcher,
   ],
   controllers: [CodefController],
+  exports: [CodefVaccinationFetcher],
 })
 export class CodefModule {}
