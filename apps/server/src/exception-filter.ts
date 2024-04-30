@@ -12,6 +12,6 @@ export class DomainExceptionFilter implements ExceptionFilter {
 
     response
       .status(400)
-      .json(ErrorResponse.of(exception.errorData, exception.message));
+      .json(ErrorResponse.of(exception.errorData, exception.errorData.message));
   }
 }

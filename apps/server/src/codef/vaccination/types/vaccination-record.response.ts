@@ -37,7 +37,7 @@ export class VaccinationRecordResponse extends CodefResponse<CodefMyVaccinationD
   }
 }
 
-class CodefMyVaccinationData {
+export class CodefMyVaccinationData {
   resUserNm!: string;
   resUserIdentiyNo!: string;
   resVaccineList!: CodefResVacccine[];

@@ -4,6 +4,8 @@ import { CredentialService } from './credential.service';
 import NodeRSA from 'node-rsa';
 import { RequestService } from '../request/types';
 import { CodefResponse } from './types/common/codef.response';
+import { validateResponse } from './validate-response';
+import { CodefMyVaccinationData } from './vaccination/types/vaccination-record.response';
 
 @Injectable()
 export class CodefService {
@@ -11,7 +13,8 @@ export class CodefService {
     @Inject('CodefRequestService')
     private requestService: RequestService,
     private credentialService: CredentialService
-  ) {}
+  ) {
+  }
 
   public encryptPassword(password: string): string {
     const key = new NodeRSA();
@@ -24,12 +27,12 @@ export class CodefService {
   async getVaccinationRecords(
     id: string,
     password: string
-  ): Promise<CodefResponse<never>> {
+  ): Promise<CodefResponse<CodefMyVaccinationData>> {
     const response = await this.requestService.post<CodefResponse<never>>(
       'https://development.codef.io/v1/kr/public/hw/nip-cdc-list/my-vaccination',
       new VaccinationRecordRequest(id, this.encryptPassword(password))
     );
 
-    return response;
+    return validateResponse<CodefResponse<CodefMyVaccinationData>>(response);
   }
 }

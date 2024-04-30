@@ -20,9 +20,9 @@ export class VaccinationService {
     );
 
     return {
-      vaccinationIdentity: response
-        .map((res) => res.vaccinationIdentity)
-        .filter((i) => i)[0],
+      vaccinationIdentity:
+        response.map((res) => res.vaccinationIdentity).filter((i) => i)[0] ??
+        null,
       vaccineList: response.flatMap((res) => res.vaccineList),
     };
   }
