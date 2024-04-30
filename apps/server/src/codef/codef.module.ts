@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CodefService } from './codef.service';
 import { CredentialService } from './credential.service';
-import { CodefController } from './codef.controller';
 import { CodefRequestService } from './request.service';
 import { CommonRequestService } from '../request/request.service';
 import { CodefVaccinationFetcher } from './vaccination/codef-vaccination-fetcher';
@@ -20,7 +19,6 @@ import { CodefVaccinationFetcher } from './vaccination/codef-vaccination-fetcher
     },
     CodefVaccinationFetcher,
   ],
-  controllers: [CodefController],
   exports: [CodefVaccinationFetcher],
 })
 export class CodefModule {}
