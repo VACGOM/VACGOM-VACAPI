@@ -2,6 +2,8 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import * as crypto from 'crypto';
 import { IdempotencyService } from './idempotency.service';
+import { DomainException } from '../exception/domain-exception';
+import { ErrorCode } from '../exception/error';
 
 @Injectable()
 export class IdempotencyMiddleware implements NestMiddleware {
@@ -10,13 +12,11 @@ export class IdempotencyMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const result = await this.idempotencyService.process(
       this.generateIdempotencyKey(req),
-      next.bind(this),
+      next.bind(this)
     );
 
     if (!result) {
-      res.status(400).json({
-        message: 'duplicated request',
-      });
+      throw new DomainException(ErrorCode.DUPLICATED_REQUEST);
     }
   }
 

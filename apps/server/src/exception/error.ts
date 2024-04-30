@@ -100,4 +100,9 @@ export const ErrorCode = {
     message: '입력한 정보가 유효하지 않습니다.',
     success: false,
   },
+  DUPLICATED_REQUEST: {
+    code: 'DUPLICATED_REQUEST',
+    message: '중복된 요청입니다.',
+    success: false,
+  },
 };
