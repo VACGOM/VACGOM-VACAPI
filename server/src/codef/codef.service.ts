@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { VaccinationRecordRequest } from './types/vaccination-record/vaccination-record.request';
 import { VaccinationRecordResponse } from './types/vaccination-record/vaccination-record.response';
 import { CredentialService } from './credential.service';
-import * as NodeRSA from 'node-rsa';
+import NodeRSA from 'node-rsa';
 import { RequestService } from '../request/types';
 
 @Injectable()
