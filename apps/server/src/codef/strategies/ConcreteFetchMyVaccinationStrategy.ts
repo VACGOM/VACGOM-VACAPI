@@ -1,19 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { VaccinationFetcher } from '../../vaccination/types/vaccination-fetcher';
+import { FetchMyVaccinationStrategy } from '../../nip/strategies/fetchMyVaccination/FetchMyVaccinationStrategy';
 import { VaccinationRequest, VaccinationResponse } from '@vacgom/types';
 import { CodefService } from '../codef.service';
 import { plainToInstance } from 'class-transformer';
 import { VaccinationRecordResponse } from './types/vaccination-record.response';
-import { CodefException } from '../exceptions/CodefException';
 import { DomainException } from '../../exception/domain-exception';
 import { ErrorCode } from '../../exception/error';
 import { UnhandledCodefException } from '../exceptions/UnhandledCodefException';
+import { CodefException } from '../exceptions/CodefException';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class CodefVaccinationFetcher implements VaccinationFetcher {
+export class ConcreteFetchMyVaccinationStrategy
+  implements FetchMyVaccinationStrategy
+{
   constructor(private codefService: CodefService) {}
 
-  async fetch(request: VaccinationRequest): Promise<VaccinationResponse> {
+  async fetchMyVaccination(
+    request: VaccinationRequest
+  ): Promise<VaccinationResponse> {
     try {
       const codefResponse = await this.codefService.getVaccinationRecords(
         request.id,
