@@ -70,6 +70,8 @@ export class SecureNoState extends PasswordResetState {
         await this.context.requestPasswordChange(this.context.request.data);
 
         return false;
+      } else {
+        throw e;
       }
     }
   }
