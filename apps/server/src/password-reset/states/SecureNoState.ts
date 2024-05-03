@@ -42,15 +42,31 @@ export class SecureNoState extends PasswordResetState {
       request.twoWayInfo
     );
 
-    const response = await this.nipService.requestPasswordReset(smsCodeRequest);
+    try {
+      const response = await this.nipService.requestPasswordReset(
+        smsCodeRequest
+      );
 
-    if (response instanceof SecureNoResponse) {
-      this.context.secureNoImage = response.secureNoImage;
-      await this.context.save();
-      throw new DomainException(ErrorCode.SECURE_NO_ERROR);
-    } else if (response instanceof SMSResponse) {
-      console.log('SMS State로 전환 !!');
-      return true;
+      if (response instanceof SecureNoResponse) {
+        this.context.secureNoImage = response.secureNoImage;
+        await this.context.save();
+
+        return false;
+      } else if (response instanceof SMSResponse) {
+        console.log('SMS State로 전환 !!');
+        return true;
+      }
+    } catch (e) {
+      if (!(e instanceof DomainException)) {
+        throw e;
+      }
+
+      if (e.errorData == ErrorCode.SECURE_NO_ERROR) {
+        this.context.changeState(StateType.INITIAL);
+        await this.context.requestPasswordChange(this.context.request.data);
+
+        return false;
+      }
     }
   }
 }

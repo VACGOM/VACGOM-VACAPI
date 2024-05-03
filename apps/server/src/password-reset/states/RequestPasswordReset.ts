@@ -16,7 +16,7 @@ export class RequestPasswordReset extends PasswordResetState {
     return this.context.state.requestPasswordChange(request);
   }
 
-  async requestSecureNoImage(): Promise<string> {
+  public async requestSecureNoImage(): Promise<string> {
     if (this.context.secureNoImage == undefined) {
       throw new Error('안전번호 이미지가 없습니다.');
     }

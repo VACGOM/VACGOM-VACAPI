@@ -15,6 +15,8 @@ export function validateResponse<T extends CodefResponse<any>>(response: T): T {
       throw new DomainException(ErrorCode.ID_NOT_FOUND);
     case 'CF-12801':
       throw new DomainException(ErrorCode.PASSWORD_ERROR);
+    case 'CF-13301':
+      throw new DomainException(ErrorCode.SECURE_NO_ERROR);
     default:
       throw new UnhandledCodefException(response);
   }
