@@ -48,6 +48,7 @@
     "bottleneck": "^2.19.5",
     "class-transformer": "^0.5.1",
     "ioredis": "^5.4.1",
+    "js-joda": "^1.11.0",
     "node-rsa": "^1.1.1",
     "redlock": "^5.0.0-beta.2",
     "reflect-metadata": "^0.1.13",

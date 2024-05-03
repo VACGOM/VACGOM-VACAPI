@@ -6,6 +6,7 @@ import { UnhandledCodefException } from './exceptions/UnhandledCodefException';
 
 export function validateResponse<T extends CodefResponse<any>>(response: T): T {
   switch (response.result.code) {
+    case 'CF-03002':
     case 'CF-00000':
       return response;
     case 'CF-12100':

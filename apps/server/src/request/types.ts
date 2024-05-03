@@ -1,5 +1,5 @@
 export interface RequestService {
   get<T>(url: string): Promise<T>;
 
-  post<T>(url: string, data: any): Promise<T>;
+  post<D, T>(url: string, data: D): Promise<T>;
 }
