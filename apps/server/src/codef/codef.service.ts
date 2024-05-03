@@ -8,9 +8,11 @@ import { CodefMyVaccinationData } from './strategies/fetch-my-vaccination/types/
 import { PasswordService } from './password.service';
 import { CodefResetPasswordRequest } from './dtos/reset-password/codef-reset-password.request';
 import {
-  ResetPasswordResponse,
-  ResetPasswordSuccessResponse,
+  CodefResetPasswordSecureNo2WayResponse,
+  CodefResetPasswordSMSAuthNo2WayResponse,
+  CodefResetPasswordSuccessResponse,
 } from './dtos/reset-password/reset-password.response';
+import { CodefResetPasswordResponse } from './types/reset-password/reset-password.response';
 
 @Injectable()
 export class CodefService {
@@ -23,7 +25,7 @@ export class CodefService {
 
   async resetPassword(
     request: CodefResetPasswordRequest
-  ): Promise<ResetPasswordResponse | ResetPasswordSuccessResponse> {
+  ): Promise<CodefResetPasswordResponse> {
     const response = await this.requestService.post<
       CodefResetPasswordRequest,
       CodefResponse<any>
@@ -35,9 +37,12 @@ export class CodefService {
     validateResponse(response);
 
     if (response.data.continue2Way) {
-      return new ResetPasswordResponse(response.data);
+      if (response.data.method == 'secureNo')
+        return new CodefResetPasswordSecureNo2WayResponse(response.data);
+      else if (response.data.method == 'smsAuthNo')
+        return new CodefResetPasswordSMSAuthNo2WayResponse(response.data);
     } else {
-      return new ResetPasswordSuccessResponse(response.data);
+      return new CodefResetPasswordSuccessResponse(response.data);
     }
   }
 

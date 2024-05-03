@@ -1,16 +1,12 @@
-import {
-  ResetPasswordRequest,
-  SecureNoRequest,
-  SecureNoResponse,
-  SMSCodeRequest,
-} from './request';
+import { ResetPasswordRequest, SMSCodeRequest } from './request';
+import { SecureNoResponse } from './response';
 
 export interface RequestPasswordResetStrategy {
   requestPasswordReset(
-    request: ResetPasswordRequest
+    request: ResetPasswordRequest | SMSCodeRequest
   ): Promise<SecureNoResponse>;
 
-  requestSecureNo(request: SecureNoRequest): Promise<SecureNoResponse>;
+  requestSecureNo(request: SecureNoResponse): Promise<SecureNoResponse>;
 
   requestSMSCode(request: SMSCodeRequest): Promise<ResetPasswordRequest>;
 }

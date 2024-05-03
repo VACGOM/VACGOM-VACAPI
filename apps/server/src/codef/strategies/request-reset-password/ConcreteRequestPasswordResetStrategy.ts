@@ -1,14 +1,21 @@
 import { RequestPasswordResetStrategy } from '../../../nip/strategies/resetPassword/RequestPasswordResetStrategy';
 import {
   ResetPasswordRequest,
-  SecureNoRequest,
-  SecureNoResponse,
   SMSCodeRequest,
 } from '../../../nip/strategies/resetPassword/request';
 import { CodefService } from '../../codef.service';
-import { ResetPasswordResponse } from '../../dtos/reset-password/reset-password.response';
+import {
+  CodefResetPassword2WayResponse,
+  CodefResetPasswordSecureNo2WayResponse,
+  CodefResetPasswordSuccessResponse,
+} from '../../dtos/reset-password/reset-password.response';
 import { Injectable } from '@nestjs/common';
-import { RequestResetPasswordMapper } from './mapper';
+import { SecureNoResponse } from '../../../nip/strategies/resetPassword/response';
+import {
+  CodefResetPasswordRequest,
+  TwoWayResetPasswordRequest,
+} from '../../dtos/reset-password/codef-reset-password.request';
+import { PasswordService } from '../../password.service';
 
 @Injectable()
 export class ConcreteRequestPasswordResetStrategy
@@ -16,37 +23,48 @@ export class ConcreteRequestPasswordResetStrategy
 {
   constructor(
     private codefService: CodefService,
-    private mapperService: RequestResetPasswordMapper
+    private passwordService: PasswordService
   ) {}
 
   async requestPasswordReset(
-    request: ResetPasswordRequest
+    request: ResetPasswordRequest | SMSCodeRequest
   ): Promise<SecureNoResponse> {
-    const response = await this.codefService.resetPassword(
-      this.mapperService.toCodefResetPasswordRequest(request)
+    let response:
+      | SecureNoResponse
+      | CodefResetPassword2WayResponse
+      | CodefResetPasswordSuccessResponse;
+
+    request.newPassword = this.passwordService.encryptPassword(
+      request.newPassword
     );
 
-    if (!(response instanceof ResetPasswordResponse)) {
-      throw new Error('Invalid response type');
+    if (request instanceof SMSCodeRequest) {
+      response = await this.codefService.resetPassword(
+        TwoWayResetPasswordRequest.fromRequest(request)
+      );
+    } else {
+      response = await this.codefService.resetPassword(
+        CodefResetPasswordRequest.fromRequest(request)
+      );
     }
 
-    return {
-      isTwoWay: response.continue2Way,
-      jobIndex: response.jobIndex,
-      threadIndex: response.threadIndex,
-      jti: response.jti,
-      twoWayTimestamp: parseInt(response.twoWayTimestamp),
-      data: {
-        secureNoImage: response.extraInfo.reqSecureNo,
-      },
-    };
+    if (response instanceof CodefResetPasswordSecureNo2WayResponse) {
+      return new SecureNoResponse(response.extraInfo.reqSecureNo, {
+        jobIndex: response.jobIndex,
+        threadIndex: response.threadIndex,
+        jti: response.jti,
+        twoWayTimestamp: response.twoWayTimestamp,
+      });
+    } else {
+      console.log(response);
+    }
   }
 
   requestSMSCode(request: SMSCodeRequest): Promise<ResetPasswordRequest> {
     return Promise.resolve(undefined);
   }
 
-  requestSecureNo(request: SecureNoRequest): Promise<SecureNoResponse> {
+  requestSecureNo(request: SecureNoResponse): Promise<SecureNoResponse> {
     return Promise.resolve(undefined);
   }
 }

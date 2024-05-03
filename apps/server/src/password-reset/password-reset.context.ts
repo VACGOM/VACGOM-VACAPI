@@ -6,7 +6,7 @@ import { ContextRepository } from './context.repository';
 
 export class PasswordResetContext {
   public stateType!: StateType;
-  public secureNoImage?: string;
+
   state: PasswordResetState;
 
   constructor(
@@ -14,7 +14,8 @@ export class PasswordResetContext {
     private repository: ContextRepository,
     public memberId: string,
     public request: RequestInfo<ResetPasswordRequest>,
-    state: StateType
+    state: StateType,
+    public secureNoImage?: string
   ) {
     this.changeState(state);
   }

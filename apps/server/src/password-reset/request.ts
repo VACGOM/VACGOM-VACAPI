@@ -1,9 +1,8 @@
 export type TwoWayInfo = {
-  isTwoWay: boolean;
   jobIndex: number;
   threadIndex: number;
   jti: string;
-  twoWayTimestamp: number;
+  twoWayTimestamp: string;
 };
 
 export class RequestInfo<T> {
@@ -24,7 +23,7 @@ export class RequestInfo<T> {
   }
 
   public setData(data: T) {
-    this.data = data;
+    this.data = { ...data };
   }
 
   public setTwoWayInfo(twoWayInfo: TwoWayInfo) {

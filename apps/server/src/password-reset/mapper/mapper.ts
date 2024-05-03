@@ -18,6 +18,7 @@ export class ContextMapper {
     return {
       memberId: context.memberId,
       stateType: context.stateType,
+      secureNoImage: context.secureNoImage,
       requestInfo: {
         identity: context.request.data.identity.to9DigitIdentity(),
         name: context.request.data.name,
@@ -26,7 +27,6 @@ export class ContextMapper {
         telecom: context.request.data.telecom.toString(),
         twoWayInfo: context.request.twoWayInfo
           ? {
-              isTwoWay: context.request.twoWayInfo.isTwoWay,
               jobIndex: context.request.twoWayInfo.jobIndex,
               jti: context.request.twoWayInfo.jti,
               threadIndex: context.request.twoWayInfo.threadIndex,
@@ -40,7 +40,6 @@ export class ContextMapper {
   public toContext(dto: ContextOutputDto): PasswordResetContext {
     const twoWayInfo = dto.requestInfo.twoWayInfo
       ? {
-          isTwoWay: dto.requestInfo.twoWayInfo.isTwoWay,
           jobIndex: dto.requestInfo.twoWayInfo.jobIndex,
           jti: dto.requestInfo.twoWayInfo.jti,
           threadIndex: dto.requestInfo.twoWayInfo.threadIndex,
@@ -62,6 +61,11 @@ export class ContextMapper {
     const state = dto.stateType as StateType;
 
     console.log(state);
-    return this.factory.create(dto.memberId, requestInfo, state);
+    return this.factory.create(
+      dto.memberId,
+      requestInfo,
+      state,
+      dto.secureNoImage
+    );
   }
 }

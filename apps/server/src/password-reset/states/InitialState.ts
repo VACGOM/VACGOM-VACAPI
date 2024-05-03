@@ -12,14 +12,12 @@ export class InitialState extends PasswordResetState {
   public async requestPasswordChange(
     request: ResetPasswordRequest
   ): Promise<boolean> {
+    console.log(request, 'requestPasswordChange');
     this.context.request.setData(request);
     const response = await this.nipService.requestPasswordReset(request);
 
-    this.context.secureNoImage = response.data.secureNoImage;
-    this.context.request.setTwoWayInfo({
-      isTwoWay: true,
-      ...response,
-    });
+    this.context.secureNoImage = response.secureNoImage;
+    this.context.request.setTwoWayInfo(response.twoWayInfo);
 
     this.context.changeState(StateType.REQUEST_PASSWORD_RESET);
 

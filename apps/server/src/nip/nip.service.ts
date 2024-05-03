@@ -4,8 +4,9 @@ import { FetchMyVaccinationStrategy } from './strategies/fetchMyVaccination/Fetc
 import { RequestPasswordResetStrategy } from './strategies/resetPassword/RequestPasswordResetStrategy';
 import {
   ResetPasswordRequest,
-  SecureNoResponse,
+  SMSCodeRequest,
 } from './strategies/resetPassword/request';
+import { SecureNoResponse } from './strategies/resetPassword/response';
 
 @Injectable()
 export class NipService {
@@ -23,7 +24,7 @@ export class NipService {
   }
 
   public async requestPasswordReset(
-    request: ResetPasswordRequest
+    request: ResetPasswordRequest | SMSCodeRequest
   ): Promise<SecureNoResponse> {
     return this.requestPasswordResetStrategy.requestPasswordReset(request);
   }

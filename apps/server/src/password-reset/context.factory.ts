@@ -30,14 +30,16 @@ export class ContextFactory {
   public create(
     memberId: string,
     requestInfo = new RequestInfo<ResetPasswordRequest>(),
-    state = StateType.INITIAL
+    state = StateType.INITIAL,
+    secureNoImage?: string
   ): PasswordResetContext {
     return new PasswordResetContext(
       this.states,
       this.repository,
       memberId,
       requestInfo,
-      state
+      state,
+      secureNoImage
     );
   }
 }

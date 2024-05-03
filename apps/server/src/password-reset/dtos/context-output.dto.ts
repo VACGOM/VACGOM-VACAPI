@@ -2,6 +2,7 @@ export class ContextOutputDto {
   stateType!: string;
   memberId!: string;
   requestInfo!: RequestInfoOutputDto;
+  secureNoImage?: string;
 }
 
 export class RequestInfoOutputDto {
@@ -12,10 +13,9 @@ export class RequestInfoOutputDto {
   phoneNumber!: string;
 
   twoWayInfo?: {
-    isTwoWay: boolean;
     jobIndex: number;
     threadIndex: number;
     jti: string;
-    twoWayTimestamp: number;
+    twoWayTimestamp: string;
   };
 }
