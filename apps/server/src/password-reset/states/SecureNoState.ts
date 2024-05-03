@@ -61,7 +61,11 @@ export class SecureNoState extends PasswordResetState {
         throw e;
       }
 
-      if (e.errorData == ErrorCode.SECURE_NO_ERROR) {
+      if (
+        e.errorData == ErrorCode.SECURE_NO_ERROR ||
+        e.errorData == ErrorCode.DUPLICATE_REQUEST ||
+        e.errorData == ErrorCode.TIMEOUT_ERROR
+      ) {
         this.context.changeState(StateType.INITIAL);
         await this.context.requestPasswordChange(this.context.request.data);
 

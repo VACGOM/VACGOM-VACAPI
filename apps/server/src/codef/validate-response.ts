@@ -17,6 +17,10 @@ export function validateResponse<T extends CodefResponse<any>>(response: T): T {
       throw new DomainException(ErrorCode.PASSWORD_ERROR);
     case 'CF-13301':
       throw new DomainException(ErrorCode.SECURE_NO_ERROR);
+    case 'CF-01004':
+      throw new DomainException(ErrorCode.TIMEOUT_ERROR);
+    case 'CF-00025':
+      throw new DomainException(ErrorCode.DUPLICATE_REQUEST);
     default:
       throw new UnhandledCodefException(response);
   }

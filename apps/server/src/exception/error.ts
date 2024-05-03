@@ -110,4 +110,14 @@ export const ErrorCode = {
     message: '지원하지 않는 동작입니다. 처음 상태부터 다시 시도해주세요.',
     success: false,
   },
+  TIMEOUT_ERROR: {
+    code: 'TIMEOUT_ERROR',
+    message: '요청 시간이 초과되었습니다.',
+    success: false,
+  },
+  DUPLICATE_REQUEST: {
+    code: 'DUPLICATE_REQUEST',
+    message: '중복된 요청입니다. (이미 요청이 완료되었습니다. Codef Response)',
+    success: false,
+  },
 };
