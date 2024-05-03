@@ -120,4 +120,9 @@ export const ErrorCode = {
     message: '중복된 요청입니다. (이미 요청이 완료되었습니다. Codef Response)',
     success: false,
   },
+  VERIFICATION_BLOCKED: {
+    code: 'VERIFICATION_BLOCKED',
+    message: '본인인증이 제한되었습니다. 예방접종도우미에서 직접 처리해주세요.',
+    success: false,
+  },
 };

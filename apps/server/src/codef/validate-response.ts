@@ -21,6 +21,8 @@ export function validateResponse<T extends CodefResponse<any>>(response: T): T {
       throw new DomainException(ErrorCode.TIMEOUT_ERROR);
     case 'CF-00025':
       throw new DomainException(ErrorCode.DUPLICATE_REQUEST);
+    case 'CF-12834':
+      throw new DomainException(ErrorCode.VERIFICATION_BLOCKED);
     default:
       throw new UnhandledCodefException(response);
   }
