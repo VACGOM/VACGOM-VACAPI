@@ -17,7 +17,7 @@ export class RequestResetPasswordMapper {
       userPassword: this.passwordService.encryptPassword(request.newPassword),
       phoneNo: request.phoneNumber,
       identity: request.identity.to9DigitIdentity(),
-      telecom: request.telecom.toString(),
+      telecom: '0',
       timeout: '170',
     };
   }

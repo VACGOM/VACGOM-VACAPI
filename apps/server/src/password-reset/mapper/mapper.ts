@@ -5,9 +5,14 @@ import { ResetPasswordRequest } from '../../nip/strategies/resetPassword/request
 import { Identity, Telecom } from '@vacgom/types';
 import { ContextFactory } from '../context.factory';
 import { StateType } from '../password-reset.state';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ContextMapper {
-  constructor(private factory: ContextFactory) {}
+  constructor(
+    @Inject(forwardRef(() => ContextFactory))
+    private factory: ContextFactory
+  ) {}
 
   public toDto(context: PasswordResetContext): ContextOutputDto {
     return {
@@ -45,7 +50,7 @@ export class ContextMapper {
 
     const requestInfo = new RequestInfo<ResetPasswordRequest>(
       {
-        identity: Identity.fromPartialRnnString(dto.requestInfo.identity),
+        identity: Identity.from9DigitIdentity(dto.requestInfo.identity),
         name: dto.requestInfo.name,
         newPassword: dto.requestInfo.newPassword,
         phoneNumber: dto.requestInfo.phoneNumber,
@@ -54,8 +59,9 @@ export class ContextMapper {
       twoWayInfo
     );
 
-    const state = StateType[dto.stateType];
+    const state = dto.stateType as StateType;
 
+    console.log(state);
     return this.factory.create(dto.memberId, requestInfo, state);
   }
 }
