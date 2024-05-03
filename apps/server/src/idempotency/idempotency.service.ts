@@ -9,7 +9,7 @@ export class IdempotencyService {
 
   public async process(
     idempotencyKey: string,
-    fn: () => Promise<any>,
+    fn: () => Promise<any>
   ): Promise<boolean> {
     return this.redLock.using([idempotencyKey], 5000, async (signal) => {
       const isHit = await this.isHit(idempotencyKey);
@@ -28,6 +28,6 @@ export class IdempotencyService {
   }
 
   public async save(idempotencyKey: string): Promise<void> {
-    await this.redisClient.set(`request-${idempotencyKey}`, 1, 'EX', 5);
+    await this.redisClient.set(`request-${idempotencyKey}`, 1, 'EX', 1);
   }
 }
