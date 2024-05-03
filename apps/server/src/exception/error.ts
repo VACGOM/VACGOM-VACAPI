@@ -105,4 +105,9 @@ export const ErrorCode = {
     message: '중복된 요청입니다.',
     success: false,
   },
+  UNSUPPORTED_OPERATION: {
+    code: 'UNSUPPORTED_OPERATION',
+    message: '지원하지 않는 동작입니다. 처음 상태부터 다시 시도해주세요.',
+    success: false,
+  },
 };

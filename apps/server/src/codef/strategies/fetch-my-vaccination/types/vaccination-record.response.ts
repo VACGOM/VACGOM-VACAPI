@@ -1,7 +1,7 @@
-import { CodefResponse } from '../../types/common/codef.response';
+import { CodefResponse } from '../../../types/common/codef.response';
 import { VaccinationResponse, VaccineData } from '@vacgom/types';
-import { Identity } from '../../utils/identity.model';
-import { formatDate } from '../../utils/date';
+import { Identity } from '../../../utils/identity.model';
+import { formatDate } from '../../../utils/date';
 
 export class VaccinationRecordResponse extends CodefResponse<CodefMyVaccinationData> {
   public toVaccinationResponse(): VaccinationResponse {

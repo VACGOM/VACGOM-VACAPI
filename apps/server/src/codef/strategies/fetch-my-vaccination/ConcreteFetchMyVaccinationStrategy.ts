@@ -1,12 +1,12 @@
-import { FetchMyVaccinationStrategy } from '../../nip/strategies/fetchMyVaccination/FetchMyVaccinationStrategy';
+import { FetchMyVaccinationStrategy } from '../../../nip/strategies/fetchMyVaccination/FetchMyVaccinationStrategy';
 import { VaccinationRequest, VaccinationResponse } from '@vacgom/types';
-import { CodefService } from '../codef.service';
+import { CodefService } from '../../codef.service';
 import { plainToInstance } from 'class-transformer';
 import { VaccinationRecordResponse } from './types/vaccination-record.response';
-import { DomainException } from '../../exception/domain-exception';
-import { ErrorCode } from '../../exception/error';
-import { UnhandledCodefException } from '../exceptions/UnhandledCodefException';
-import { CodefException } from '../exceptions/CodefException';
+import { DomainException } from '../../../exception/domain-exception';
+import { ErrorCode } from '../../../exception/error';
+import { UnhandledCodefException } from '../../exceptions/UnhandledCodefException';
+import { CodefException } from '../../exceptions/CodefException';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
