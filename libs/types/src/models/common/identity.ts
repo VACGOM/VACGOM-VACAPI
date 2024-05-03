@@ -1,4 +1,4 @@
-import { LocalDate } from 'js-joda';
+import { DateTimeFormatter, LocalDate } from 'js-joda';
 import { InvalidRnnSecretException } from '../../exceptions/InvalidRnnSecretException';
 
 export class Identity {
@@ -45,7 +45,16 @@ export class Identity {
     return new Identity(birthDate, matches[2]);
   }
 
+  static from9DigitIdentity(identity: string): Identity {
+    if (identity.length != 9) throw new InvalidRnnSecretException();
+    console.log(identity.slice(2, 9));
+    return Identity.fromPartialRnnString(identity.slice(2, 9));
+  }
+
   to9DigitIdentity(): string {
-    return `${this.birthDate.toString().replace('/-/g', '')}${this.rnnSecret}`;
+    const birthDate = this.birthDate.format(
+      DateTimeFormatter.ofPattern('yyyyMMdd')
+    );
+    return `${birthDate}${this.rnnSecret}`;
   }
 }
