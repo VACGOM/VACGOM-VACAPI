@@ -5,7 +5,10 @@ import {
   SMSCodeRequest,
 } from '../../nip/strategies/resetPassword/request';
 import { NipService } from '../../nip/nip.service';
-import { SecureNoResponse } from '../../nip/strategies/resetPassword/response';
+import {
+  SecureNoResponse,
+  SMSResponse,
+} from '../../nip/strategies/resetPassword/response';
 import { DomainException } from '../../exception/domain-exception';
 import { ErrorCode } from '../../exception/error';
 
@@ -40,13 +43,14 @@ export class SecureNoState extends PasswordResetState {
     );
 
     const response = await this.nipService.requestPasswordReset(smsCodeRequest);
-    console.log(response, response instanceof SecureNoResponse);
 
     if (response instanceof SecureNoResponse) {
       this.context.secureNoImage = response.secureNoImage;
       await this.context.save();
       throw new DomainException(ErrorCode.SECURE_NO_ERROR);
+    } else if (response instanceof SMSResponse) {
+      console.log('SMS State로 전환 !!');
+      return true;
     }
-    return true;
   }
 }

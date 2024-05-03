@@ -6,7 +6,10 @@ import {
   ResetPasswordRequest,
   SMSCodeRequest,
 } from './strategies/resetPassword/request';
-import { SecureNoResponse } from './strategies/resetPassword/response';
+import {
+  SecureNoResponse,
+  SMSResponse,
+} from './strategies/resetPassword/response';
 
 @Injectable()
 export class NipService {
@@ -25,7 +28,7 @@ export class NipService {
 
   public async requestPasswordReset(
     request: ResetPasswordRequest | SMSCodeRequest
-  ): Promise<SecureNoResponse> {
+  ): Promise<SecureNoResponse | SMSResponse> {
     return this.requestPasswordResetStrategy.requestPasswordReset(request);
   }
 }
