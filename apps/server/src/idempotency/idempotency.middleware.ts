@@ -21,7 +21,12 @@ export class IdempotencyMiddleware implements NestMiddleware {
   }
 
   private generateIdempotencyKey(req: Request): string {
-    const payload = `${req.path}-${req.method}-${JSON.stringify(req.body)}`;
+    const payload = JSON.stringify({
+      baseUrl: req.baseUrl,
+      method: req.method,
+      headers: req.headers,
+      body: req.body,
+    });
 
     return crypto.createHash('sha256').update(payload).digest('hex');
   }
