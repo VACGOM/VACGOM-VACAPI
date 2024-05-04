@@ -37,6 +37,7 @@ export class PasswordResetContext {
   ): Promise<boolean> {
     const decoded = ResetPasswordRequestNew.decode(request);
     if (isLeft(decoded)) {
+      console.log(decoded.left);
       throw new Error('Invalid request');
     }
 

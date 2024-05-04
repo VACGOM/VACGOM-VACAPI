@@ -20,7 +20,7 @@ export class CodefResetPasswordRequest {
   static fromRequest(request: ResetPasswordRequest): CodefResetPasswordRequest {
     return new CodefResetPasswordRequest(
       request.name,
-      request.identity.to9DigitIdentity(),
+      request.identity.to9DigitRnnString(),
       request.newPassword,
       '0',
       request.phoneNumber
@@ -47,7 +47,7 @@ export class TwoWayResetPasswordRequest extends CodefResetPasswordRequest {
   static fromRequest(request: SMSCodeRequest): TwoWayResetPasswordRequest {
     return new TwoWayResetPasswordRequest(
       request.name,
-      request.identity.to9DigitIdentity(),
+      request.identity.to9DigitRnnString(),
       request.newPassword,
       '0',
       request.phoneNumber,

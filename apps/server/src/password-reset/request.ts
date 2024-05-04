@@ -11,8 +11,8 @@ export type TwoWayInfo = t.TypeOf<typeof TwoWayInfoType>;
 
 export const RequestInfoType = <T extends t.Mixed>(dataType: T) => {
   return t.type({
-    data: dataType,
-    twoWayInfo: TwoWayInfoType,
+    data: t.union([dataType, t.null]),
+    twoWayInfo: t.union([TwoWayInfoType, t.null]),
   });
 };
 

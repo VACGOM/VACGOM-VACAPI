@@ -17,7 +17,15 @@ export class InitialState extends PasswordResetState {
   ): Promise<boolean> {
     console.log(request, 'requestPasswordChange');
     this.context.request.data = request;
-    const response = await this.nipService.requestPasswordReset(request);
+    const response = await this.nipService.requestPasswordReset(
+      new ResetPasswordRequest(
+        request.name,
+        request.identity,
+        request.newPassword,
+        request.telecom,
+        request.phoneNumber
+      )
+    );
 
     if (!(response instanceof SecureNoResponse))
       throw new DomainException(ErrorCode.CODEF_ERROR);
