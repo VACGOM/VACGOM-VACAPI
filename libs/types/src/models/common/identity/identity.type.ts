@@ -6,6 +6,8 @@ export const IdentityType = new t.Type<Identity, string, unknown>(
   'Identity',
   (u): u is Identity => u instanceof Identity,
   (u, c) => {
+    if (u instanceof Identity) return t.success(u);
+    
     const str = t.string.validate(u, c);
     if (isLeft(str)) return t.failure(u, c);
 

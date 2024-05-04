@@ -6,6 +6,8 @@ export const TelecomType = new t.Type<Telecom, string, unknown>(
   'Telecom',
   (u): u is Telecom => u instanceof Telecom,
   (u, c) => {
+    if (u instanceof Telecom) return t.success(u);
+    
     const str = t.string.validate(u, c);
     if (isLeft(str)) return t.failure(u, c);
 
