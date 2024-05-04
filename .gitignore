@@ -43,3 +43,5 @@ Thumbs.db
 apps/server/.env
 
 nx-cloud.env
+
+libs/coverage
