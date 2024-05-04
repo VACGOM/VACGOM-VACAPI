@@ -17,3 +17,5 @@ export const TelecomType = new t.Type<Telecom, string, unknown>(
   },
   (u) => u.toString()
 );
+
+export type TelecomType = t.TypeOf<typeof TelecomType>;

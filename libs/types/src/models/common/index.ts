@@ -1,2 +1,2 @@
-export * from './identity/identity';
+export * from './identity';
 export * from './telecom';
