@@ -1,8 +1,13 @@
 import { PasswordResetState, StateType } from './password-reset.state';
-import { RequestInfo } from './request';
 import { ResetPasswordRequest } from '../nip/strategies/resetPassword/request';
 import { States } from './types/state';
 import { ContextRepository } from './context.repository';
+import {
+  ResetPasswordRequestNew,
+  ResetPasswordRequestType,
+} from './types/reset-password.request';
+import { isLeft } from 'fp-ts/These';
+import { RequestInfo } from './request';
 
 export class PasswordResetContext {
   public stateType!: StateType;
@@ -13,7 +18,7 @@ export class PasswordResetContext {
     private states: States,
     private repository: ContextRepository,
     public memberId: string,
-    public request: RequestInfo<ResetPasswordRequest>,
+    public request: RequestInfo<ResetPasswordRequestType>,
     state: StateType,
     public secureNoImage?: string
   ) {
@@ -28,9 +33,16 @@ export class PasswordResetContext {
   }
 
   public async requestPasswordChange(
-    request: ResetPasswordRequest
+    request: ResetPasswordRequestType
   ): Promise<boolean> {
-    return this.operate(() => this.state.requestPasswordChange(request));
+    const decoded = ResetPasswordRequestNew.decode(request);
+    if (isLeft(decoded)) {
+      throw new Error('Invalid request');
+    }
+
+    const right = decoded.right;
+
+    return this.operate(() => this.state.requestPasswordChange(decoded.right));
   }
 
   public async requestSecureNoImage(): Promise<string> {

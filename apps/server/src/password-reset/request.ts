@@ -1,34 +1,21 @@
-export type TwoWayInfo = {
-  jobIndex: number;
-  threadIndex: number;
-  jti: string;
-  twoWayTimestamp: string;
+import * as t from 'io-ts';
+
+export const TwoWayInfoType = t.type({
+  jobIndex: t.number,
+  threadIndex: t.number,
+  jti: t.string,
+  twoWayTimestamp: t.string,
+});
+
+export type TwoWayInfo = t.TypeOf<typeof TwoWayInfoType>;
+
+export const RequestInfoType = <T extends t.Mixed>(dataType: T) => {
+  return t.type({
+    data: dataType,
+    twoWayInfo: TwoWayInfoType,
+  });
 };
 
-export class RequestInfo<T> {
-  public data: T | undefined;
-  public twoWayInfo?: TwoWayInfo;
-
-  constructor(data?: T, twoWayInfo?: TwoWayInfo) {
-    this.data = data;
-    this.twoWayInfo = twoWayInfo;
-  }
-
-  public getData(): T | undefined {
-    return this.data;
-  }
-
-  public getTwoWayInfo(): TwoWayInfo | undefined {
-    return this.twoWayInfo;
-  }
-
-  public setData(data: T) {
-    this.data = { ...data };
-  }
-
-  public setTwoWayInfo(twoWayInfo: TwoWayInfo) {
-    this.twoWayInfo = twoWayInfo;
-  }
-}
-
-//RequestData + twoWayInfo
+export type RequestInfo<T> = t.TypeOf<
+  ReturnType<typeof RequestInfoType<t.Type<T>>>
+>;
