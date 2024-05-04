@@ -42,6 +42,13 @@ export class Identity {
     return this.birthDate.format(DateTimeFormatter.ofPattern('yyMMdd'));
   }
 
+  to9DigitRnnString(): string {
+    return (
+      this.birthDate.format(DateTimeFormatter.ofPattern('yyyyMMdd')) +
+      this.rnnSexChar
+    );
+  }
+
   toFullBirthDateString(): string {
     return this.birthDate.format(DateTimeFormatter.ofPattern('yyyyMMdd'));
   }
