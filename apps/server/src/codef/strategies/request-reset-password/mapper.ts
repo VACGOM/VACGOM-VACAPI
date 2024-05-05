@@ -1,6 +1,6 @@
 import { NipResetPasswordRequest } from '../../../nip/strategies/resetPassword/request';
 import { CodefResetPasswordResponse } from '../../types/reset-password/reset-password.response';
-import { CodefRequestOf, isTwoWay } from '../../types/reset-password/utils';
+import { isTwoWay } from '../../types/reset-password/utils';
 import { NipResetPasswordResponse } from '../../../nip/strategies/resetPassword/response';
 import { CodefRequests } from '../../types/reset-password/reset-password.request';
 
@@ -35,7 +35,7 @@ export class Mapper {
         },
         secureNo: request.secureNo,
         secureNoRefresh: '0',
-      } as CodefRequestOf<T>;
+      };
     }
   }
 
