@@ -27,7 +27,7 @@ export const CodefSMSResponse = CodefResponse(
     jti: t.string,
     twoWayTimestamp: t.number,
     extraInfo: t.type({
-      reqSmsAuthNo: t.string,
+      reqSMSAuthNo: t.string,
     }),
   })
 );
