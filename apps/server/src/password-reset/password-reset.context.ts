@@ -4,6 +4,7 @@ import { ContextRepository } from './context.repository';
 import { isLeft } from 'fp-ts/These';
 import { ResetPasswordRequest } from './types/reset-password.request';
 import { Context } from './types/context';
+import { ContextOutput } from './types/context-output';
 
 export class PasswordResetContext {
   state: PasswordResetState;
@@ -29,7 +30,7 @@ export class PasswordResetContext {
 
   public async requestPasswordChange(
     request: ResetPasswordRequest
-  ): Promise<boolean> {
+  ): Promise<ContextOutput<boolean>> {
     const decoded = ResetPasswordRequest.decode(request);
     if (isLeft(decoded)) {
       console.log(decoded.left);
@@ -41,19 +42,19 @@ export class PasswordResetContext {
     return this.operate(() => this.state.requestPasswordChange(decoded.right));
   }
 
-  public async requestSecureNoImage(): Promise<string> {
+  public async requestSecureNoImage(): Promise<ContextOutput<any>> {
     return this.operate(() => this.state.requestSecureNoImage());
   }
 
-  public async inputSecureNo(secureNo: string): Promise<boolean> {
+  public async inputSecureNo(secureNo: string): Promise<ContextOutput<any>> {
     return this.operate(() => this.state.inputSecureNo(secureNo));
   }
 
-  public async inputSMSCode(smsCode: string): Promise<boolean> {
+  public async inputSMSCode(smsCode: string): Promise<ContextOutput<any>> {
     return this.operate(() => this.state.inputSMSCode(smsCode));
   }
 
-  public async changePassword(): Promise<ResetPasswordRequest> {
+  public async changePassword(): Promise<ContextOutput<any>> {
     return this.operate(() => this.state.changePassword());
   }
 
@@ -61,10 +62,14 @@ export class PasswordResetContext {
     await this.repository.save(this);
   }
 
-  private async operate<T>(fn: () => Promise<T>): Promise<T> {
+  private async operate<T>(fn: () => Promise<T>): Promise<ContextOutput<T>> {
     const result = await fn();
     await this.save();
 
-    return result;
+    return {
+      success: true,
+      state: this.data.stateType,
+      data: result,
+    };
   }
 }
