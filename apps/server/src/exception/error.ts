@@ -55,6 +55,11 @@ export const ErrorCode = {
     message: '보안 코드가 일치하지 않습니다.',
     success: false,
   },
+  SECURE_NO_ERROR_REFRESHED: {
+    code: 'SECURE_NO_ERROR_REFRESHED',
+    message: '보안 코드가 일치하지 않아 새로운 보안 코드가 생성되었습니다.',
+    success: false,
+  },
   PHONE_VERIFICATION_LOCK: {
     code: 'PHONE_VERIFICATION_LOCK',
     message: '일일 인증 횟수를 초과하여 잠금 해제가 필요합니다.',

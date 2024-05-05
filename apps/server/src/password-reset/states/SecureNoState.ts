@@ -43,7 +43,7 @@ export class SecureNoState extends PasswordResetState {
         this.context.data.secureNoImage = response.secureNoImage;
         await this.context.save();
 
-        return false;
+        throw new DomainException(ErrorCode.SECURE_NO_ERROR_REFRESHED);
       } else if (response.type == 'SMS') {
         console.log('SMS State로 전환 !!');
         return true;
@@ -60,8 +60,10 @@ export class SecureNoState extends PasswordResetState {
       ) {
         this.context.changeState(StateType.INITIAL);
         await this.context.requestPasswordChange(this.context.data.requestInfo);
+        await this.context.requestSecureNoImage();
+        await this.context.save();
 
-        return false;
+        throw new DomainException(ErrorCode.SECURE_NO_ERROR_REFRESHED);
       } else {
         throw e;
       }
