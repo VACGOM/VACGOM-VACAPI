@@ -20,6 +20,7 @@ export type CodefTwoWaySecureNoInputRequest = CodefResetPasswordRequest & {
   twoWayInfo: TwoWayInfo;
   secureNo: string;
   secureNoRefresh: string;
+  is2Way: true;
 };
 
 export type CodefRequests =

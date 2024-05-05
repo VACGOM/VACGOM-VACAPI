@@ -2,12 +2,15 @@ import { NipResetPasswordRequest } from '../../../nip/strategies/resetPassword/r
 import { CodefResetPasswordResponse } from '../../types/reset-password/reset-password.response';
 import { isTwoWay } from '../../types/reset-password/utils';
 import { NipResetPasswordResponse } from '../../../nip/strategies/resetPassword/response';
-import { CodefRequests } from '../../types/reset-password/reset-password.request';
+import {
+  CodefResetPasswordRequest,
+  CodefTwoWaySecureNoInputRequest,
+} from '../../types/reset-password/reset-password.request';
 
 export class Mapper {
-  toCodefRequest<T extends NipResetPasswordRequest>(request: T): CodefRequests {
+  toCodefRequest<T extends NipResetPasswordRequest>(request: T) {
     if (request.type == 'RequestResetPassword') {
-      return {
+      const codefRequest: CodefResetPasswordRequest = {
         organization: '0011',
         authMethod: '0',
         timeout: '170',
@@ -17,8 +20,10 @@ export class Mapper {
         telecom: request.telecom.getValue().toString(),
         phoneNo: request.phoneNumber,
       };
+
+      return codefRequest;
     } else if (request.type == 'InputSecureNo') {
-      return {
+      const codefRequest: CodefTwoWaySecureNoInputRequest = {
         organization: '0011',
         authMethod: '0',
         timeout: '170',
@@ -35,7 +40,10 @@ export class Mapper {
         },
         secureNo: request.secureNo,
         secureNoRefresh: '0',
+        is2Way: true,
       };
+
+      return codefRequest;
     }
   }
 
