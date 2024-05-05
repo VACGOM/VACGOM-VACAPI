@@ -21,3 +21,7 @@ export type CodefTwoWaySecureNoInputRequest = CodefResetPasswordRequest & {
   secureNo: string;
   secureNoRefresh: string;
 };
+
+export type CodefRequests =
+  | CodefResetPasswordRequest
+  | CodefTwoWaySecureNoInputRequest;

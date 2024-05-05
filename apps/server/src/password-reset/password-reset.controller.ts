@@ -2,6 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { Identity, Telecom } from '@vacgom/types';
 import { ContextFactory } from './context.factory';
 import { RedisContextRepositoryImpl } from './redis-context.repository';
+import { StateType } from './password-reset.state';
 
 @Controller('password-reset')
 export class PasswordResetController {
@@ -12,8 +13,11 @@ export class PasswordResetController {
 
   @Get('/')
   async test() {
-    const context = this.factory.create('형주', {
-      data: null,
+    const context = this.factory.create(StateType.REQUEST_PASSWORD_RESET, {
+      stateType: StateType.INITIAL.toString(),
+      memberId: '형주',
+      requestInfo: null,
+      secureNoImage: null,
       twoWayInfo: null,
     });
 
@@ -26,14 +30,14 @@ export class PasswordResetController {
     });
 
     const s = await context.requestSecureNoImage();
-    console.log(context.request);
-    return context.stateType;
+    console.log(context);
+    return context.data.stateType;
   }
 
   @Get('/test')
   async test2() {
     const context = await this.repository.findByUserId('형주');
-    console.log(context);
+
     await context.requestSecureNoImage();
     const s = await context.inputSecureNo('64995');
   }

@@ -2,11 +2,10 @@ import { NipResetPasswordRequest } from '../../../nip/strategies/resetPassword/r
 import { CodefResetPasswordResponse } from '../../types/reset-password/reset-password.response';
 import { CodefRequestOf, isTwoWay } from '../../types/reset-password/utils';
 import { NipResetPasswordResponse } from '../../../nip/strategies/resetPassword/response';
+import { CodefRequests } from '../../types/reset-password/reset-password.request';
 
 export class Mapper {
-  toCodefRequest<T extends NipResetPasswordRequest>(
-    request: T
-  ): CodefRequestOf<T> {
+  toCodefRequest<T extends NipResetPasswordRequest>(request: T): CodefRequests {
     if (request.type == 'RequestResetPassword') {
       return {
         organization: '0011',
@@ -17,7 +16,7 @@ export class Mapper {
         userPassword: request.newPassword,
         telecom: request.telecom.getValue().toString(),
         phoneNo: request.phoneNumber,
-      } as CodefRequestOf<T>;
+      };
     } else if (request.type == 'InputSecureNo') {
       return {
         organization: '0011',
@@ -26,7 +25,7 @@ export class Mapper {
         userName: request.name,
         identity: request.identity.to9DigitRnnString(),
         userPassword: request.newPassword,
-        telecom: request.telecom.toString(),
+        telecom: request.telecom.getValue().toString(),
         phoneNo: request.phoneNumber,
         twoWayInfo: {
           jobIndex: request.twoWayInfo.jobIndex,

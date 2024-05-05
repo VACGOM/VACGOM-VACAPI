@@ -17,11 +17,11 @@ export class RequestPasswordReset extends PasswordResetState {
   }
 
   public async requestSecureNoImage(): Promise<string> {
-    if (this.context.secureNoImage == undefined) {
+    if (this.context.data.secureNoImage == undefined) {
       throw new Error('안전번호 이미지가 없습니다.');
     }
 
     this.context.changeState(StateType.SECURE_NO);
-    return this.context.secureNoImage;
+    return this.context.data.secureNoImage;
   }
 }

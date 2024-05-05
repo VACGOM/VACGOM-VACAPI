@@ -2,28 +2,27 @@ import { PasswordResetState, StateType } from './password-reset.state';
 import { States } from './types/state';
 import { ContextRepository } from './context.repository';
 import { isLeft } from 'fp-ts/These';
-import { RequestInfo } from './request';
 import { ResetPasswordRequest } from './types/reset-password.request';
+import { Context } from './types/context';
 
 export class PasswordResetContext {
-  public stateType!: StateType;
-
   state: PasswordResetState;
+
+  public data!: Context;
 
   constructor(
     private states: States,
     private repository: ContextRepository,
-    public memberId: string,
-    public request: RequestInfo<ResetPasswordRequest>,
     state: StateType,
-    public secureNoImage?: string
+    data: Context
   ) {
+    this.data = data;
     this.changeState(state);
   }
 
   public changeState(state: StateType) {
     this.state = this.states[state];
-    this.stateType = state;
+    this.data.stateType = state;
 
     this.state.setContext(this);
   }

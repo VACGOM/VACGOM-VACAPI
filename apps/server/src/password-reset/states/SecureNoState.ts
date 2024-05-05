@@ -20,12 +20,12 @@ export class SecureNoState extends PasswordResetState {
   }
 
   public async requestSecureNoImage(): Promise<string> {
-    return this.context.secureNoImage;
+    return this.context.data.secureNoImage;
   }
 
   public async inputSecureNo(secureNo: string): Promise<boolean> {
     try {
-      const savedRequest = this.context.request.data;
+      const savedRequest = this.context.data.requestInfo;
 
       const response = await this.nipService.requestPasswordReset({
         type: 'InputSecureNo',
@@ -36,11 +36,11 @@ export class SecureNoState extends PasswordResetState {
         newPassword: savedRequest.newPassword,
         telecom: savedRequest.telecom,
         phoneNumber: savedRequest.phoneNumber,
-        twoWayInfo: this.context.request.twoWayInfo,
+        twoWayInfo: this.context.data.twoWayInfo,
       });
 
       if (response.type == 'SecureNo') {
-        this.context.secureNoImage = response.secureNoImage;
+        this.context.data.secureNoImage = response.secureNoImage;
         await this.context.save();
 
         return false;
@@ -59,7 +59,7 @@ export class SecureNoState extends PasswordResetState {
         e.errorData == ErrorCode.TIMEOUT_ERROR
       ) {
         this.context.changeState(StateType.INITIAL);
-        await this.context.requestPasswordChange(this.context.request.data);
+        await this.context.requestPasswordChange(this.context.data.requestInfo);
 
         return false;
       } else {

@@ -4,6 +4,7 @@ import Redis from 'ioredis';
 import * as process from 'node:process';
 import { PasswordResetContext } from './password-reset.context';
 import { ContextMapper } from './mapper/mapper';
+import { Context } from './types/context';
 
 @Injectable()
 export class RedisContextRepositoryImpl implements ContextRepository {
@@ -17,11 +18,17 @@ export class RedisContextRepositoryImpl implements ContextRepository {
       return null;
     }
 
-    return this.mapper.toContext(JSON.parse(data));
+    const res = this.mapper.toContext(JSON.parse(data));
+    console.log('decoderes', res);
+
+    return res;
   }
 
   async save(context: PasswordResetContext): Promise<void> {
-    const dto = this.mapper.toDto(context);
-    await this.redisClient.set(context.memberId, JSON.stringify(dto));
+    console.log(context.data);
+    await this.redisClient.set(
+      context.data.memberId,
+      JSON.stringify(Context.encode(context.data))
+    );
   }
 }
