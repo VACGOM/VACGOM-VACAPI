@@ -7,6 +7,7 @@ import { NipModule } from '../nip/nip.module';
 import { ContextMapper } from './mapper/mapper';
 import { ContextFactory } from './context.factory';
 import { RedisContextRepositoryImpl } from './redis-context.repository';
+import { SMSState } from './states/SMSState';
 
 @Module({
   imports: [NipModule],
@@ -19,6 +20,7 @@ import { RedisContextRepositoryImpl } from './redis-context.repository';
     SecureNoState,
     RedisContextRepositoryImpl,
     ContextFactory,
+    SMSState,
     {
       provide: 'ContextRepository',
       useClass: RedisContextRepositoryImpl,

@@ -45,7 +45,7 @@ export class SecureNoState extends PasswordResetState {
 
         throw new DomainException(ErrorCode.SECURE_NO_ERROR_REFRESHED);
       } else if (response.type == 'SMS') {
-        console.log('SMS State로 전환 !!');
+        this.context.changeState(StateType.SMS);
         return true;
       }
     } catch (e) {

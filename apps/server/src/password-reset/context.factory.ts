@@ -7,6 +7,7 @@ import { RequestPasswordReset } from './states/RequestPasswordReset';
 import { States } from './types/state';
 import { ContextRepository } from './context.repository';
 import { Context } from './types/context';
+import { SMSState } from './states/SMSState';
 
 @Injectable()
 export class ContextFactory {
@@ -17,12 +18,14 @@ export class ContextFactory {
     private repository: ContextRepository,
     private initialState: InitialState,
     private requestPasswordReset: RequestPasswordReset,
-    private secureNoState: SecureNoState
+    private secureNoState: SecureNoState,
+    private smsState: SMSState
   ) {
     this.states = {
       [StateType.INITIAL]: this.initialState,
       [StateType.REQUEST_PASSWORD_RESET]: this.requestPasswordReset,
       [StateType.SECURE_NO]: this.secureNoState,
+      [StateType.SMS]: this.smsState,
     };
   }
 

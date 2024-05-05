@@ -27,6 +27,12 @@ export type NipInputSecureNoRequest = {
 } & NipResetPasswordBaseRequest<'InputSecureNo'> &
   TwoWayRequest;
 
+export type NipInputSMSRequest = {
+  smsAuthNo: string;
+} & NipResetPasswordBaseRequest<'InputSMS'> &
+  TwoWayRequest;
+
 export type NipResetPasswordRequest =
   | NipRequestResetPasswordRequest
-  | NipInputSecureNoRequest;
+  | NipInputSecureNoRequest
+  | NipInputSMSRequest;

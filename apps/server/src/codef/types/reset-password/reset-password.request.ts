@@ -23,6 +23,12 @@ export type CodefTwoWaySecureNoInputRequest = CodefResetPasswordRequest & {
   is2Way: true;
 };
 
+export type CodefTwoWaySMSInputRequest = CodefResetPasswordRequest & {
+  twoWayInfo: TwoWayInfo;
+  smsAuthNo: string;
+  is2Way: true;
+};
+
 export type CodefRequests =
   | CodefResetPasswordRequest
   | CodefTwoWaySecureNoInputRequest;
