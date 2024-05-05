@@ -16,6 +16,6 @@ export class RequestInfoOutputDto {
     jobIndex: number;
     threadIndex: number;
     jti: string;
-    twoWayTimestamp: string;
+    twoWayTimestamp: number;
   };
 }

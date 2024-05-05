@@ -7,7 +7,7 @@ import { RequestPasswordReset } from './states/RequestPasswordReset';
 import { States } from './types/state';
 import { ContextRepository } from './context.repository';
 import { RequestInfo } from './request';
-import { ResetPasswordRequestType } from './types/reset-password.request';
+import { ResetPasswordRequest } from './types/reset-password.request';
 
 @Injectable()
 export class ContextFactory {
@@ -29,7 +29,7 @@ export class ContextFactory {
 
   public create(
     memberId: string,
-    requestInfo: RequestInfo<ResetPasswordRequestType>,
+    requestInfo: RequestInfo<ResetPasswordRequest>,
     state = StateType.INITIAL,
     secureNoImage?: string
   ): PasswordResetContext {

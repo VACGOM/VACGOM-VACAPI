@@ -2,14 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { VaccinationRequest, VaccinationResponse } from '@vacgom/types';
 import { FetchMyVaccinationStrategy } from './strategies/fetchMyVaccination/FetchMyVaccinationStrategy';
 import { RequestPasswordResetStrategy } from './strategies/resetPassword/RequestPasswordResetStrategy';
-import {
-  ResetPasswordRequest,
-  SMSCodeRequest,
-} from './strategies/resetPassword/request';
-import {
-  SecureNoResponse,
-  SMSResponse,
-} from './strategies/resetPassword/response';
+import { NipResetPasswordRequest } from './strategies/resetPassword/request';
+import { NipResetPasswordResponse } from './strategies/resetPassword/response';
 
 @Injectable()
 export class NipService {
@@ -27,8 +21,8 @@ export class NipService {
   }
 
   public async requestPasswordReset(
-    request: ResetPasswordRequest | SMSCodeRequest
-  ): Promise<SecureNoResponse | SMSResponse> {
+    request: NipResetPasswordRequest
+  ): Promise<NipResetPasswordResponse> {
     return this.requestPasswordResetStrategy.requestPasswordReset(request);
   }
 }

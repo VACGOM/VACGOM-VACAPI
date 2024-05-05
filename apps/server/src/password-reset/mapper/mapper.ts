@@ -5,7 +5,7 @@ import { ContextFactory } from '../context.factory';
 import { StateType } from '../password-reset.state';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { isLeft } from 'fp-ts/These';
-import { ResetPasswordRequestNew } from '../types/reset-password.request';
+import { ResetPasswordRequest } from '../types/reset-password.request';
 
 @Injectable()
 export class ContextMapper {
@@ -38,24 +38,13 @@ export class ContextMapper {
   }
 
   public toContext(dto: ContextOutputDto): PasswordResetContext {
-    const twoWayInfo = dto.requestInfo.twoWayInfo
-      ? {
-          jobIndex: dto.requestInfo.twoWayInfo.jobIndex,
-          jti: dto.requestInfo.twoWayInfo.jti,
-          threadIndex: dto.requestInfo.twoWayInfo.threadIndex,
-          twoWayTimestamp: dto.requestInfo.twoWayInfo.twoWayTimestamp,
-        }
-      : undefined;
-
-    const requestInfo = RequestInfoType(ResetPasswordRequestNew).decode(
+    const requestInfo = RequestInfoType(ResetPasswordRequest).decode(
       dto.requestInfo
     );
     if (isLeft(requestInfo)) throw new Error('Invalid request info');
 
     const state = dto.stateType as StateType;
 
-    console.log(requestInfo);
-    console.log(state);
     return this.factory.create(
       dto.memberId,
       requestInfo.right,

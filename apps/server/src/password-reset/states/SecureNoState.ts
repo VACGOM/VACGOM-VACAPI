@@ -1,16 +1,10 @@
 import { PasswordResetState, StateType } from '../password-reset.state';
 import { Injectable } from '@nestjs/common';
-import {
-  ResetPasswordRequest,
-  SMSCodeRequest,
-} from '../../nip/strategies/resetPassword/request';
+
 import { NipService } from '../../nip/nip.service';
-import {
-  SecureNoResponse,
-  SMSResponse,
-} from '../../nip/strategies/resetPassword/response';
 import { DomainException } from '../../exception/domain-exception';
 import { ErrorCode } from '../../exception/error';
+import { ResetPasswordRequest } from '../types/reset-password.request';
 
 @Injectable()
 export class SecureNoState extends PasswordResetState {
@@ -30,29 +24,27 @@ export class SecureNoState extends PasswordResetState {
   }
 
   public async inputSecureNo(secureNo: string): Promise<boolean> {
-    const request = this.context.request;
-    const smsCodeRequest = new SMSCodeRequest(
-      request.data.name,
-      request.data.identity,
-      request.data.newPassword,
-      request.data.telecom,
-      request.data.phoneNumber,
-      secureNo,
-      '0',
-      request.twoWayInfo
-    );
-
     try {
-      const response = await this.nipService.requestPasswordReset(
-        smsCodeRequest
-      );
+      const savedRequest = this.context.request.data;
 
-      if (response instanceof SecureNoResponse) {
+      const response = await this.nipService.requestPasswordReset({
+        type: 'InputSecureNo',
+        secureNo: secureNo,
+        secureNoRefresh: '0',
+        name: savedRequest.name,
+        identity: savedRequest.identity,
+        newPassword: savedRequest.newPassword,
+        telecom: savedRequest.telecom,
+        phoneNumber: savedRequest.phoneNumber,
+        twoWayInfo: this.context.request.twoWayInfo,
+      });
+
+      if (response.type == 'SecureNo') {
         this.context.secureNoImage = response.secureNoImage;
         await this.context.save();
 
         return false;
-      } else if (response instanceof SMSResponse) {
+      } else if (response.type == 'SMS') {
         console.log('SMS State로 전환 !!');
         return true;
       }

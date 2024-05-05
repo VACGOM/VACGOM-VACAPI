@@ -1,18 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { VaccinationRecordRequest } from './strategies/fetch-my-vaccination/types/vaccination-record.request';
 import { CredentialService } from './credential.service';
 import { RequestService } from '../request/types';
 import { CodefResponse } from './types/common/codef.response';
 import { validateResponse } from './validate-response';
-import { CodefMyVaccinationData } from './strategies/fetch-my-vaccination/types/vaccination-record.response';
 import { PasswordService } from './password.service';
-import { CodefResetPasswordRequest } from './dtos/reset-password/codef-reset-password.request';
 import {
-  CodefResetPasswordSecureNo2WayResponse,
-  CodefResetPasswordSMSAuthNo2WayResponse,
-  CodefResetPasswordSuccessResponse,
-} from './dtos/reset-password/reset-password.response';
-import { CodefResetPasswordResponse } from './types/reset-password/reset-password.response';
+  CodefResetPasswordRequest,
+  CodefTwoWaySecureNoInputRequest,
+} from './types/reset-password/reset-password.request';
+import {
+  CodefPasswordChangedResponse,
+  CodefSecureNoResponse,
+  CodefSMSResponse,
+} from './types/reset-password/reset-password.response';
+import { isRight } from 'fp-ts/Either';
+import { isTwoWay } from './types/reset-password/utils';
+import { isLeft } from 'fp-ts/These';
 
 @Injectable()
 export class CodefService {
@@ -24,11 +27,18 @@ export class CodefService {
   ) {}
 
   async resetPassword(
-    request: CodefResetPasswordRequest
-  ): Promise<CodefResetPasswordResponse> {
+    request: CodefResetPasswordRequest | CodefTwoWaySecureNoInputRequest
+  ): Promise<
+    CodefSecureNoResponse | CodefSMSResponse | CodefPasswordChangedResponse
+  > {
+    if (request.userPassword) {
+      request.userPassword = this.passwordService.encryptPassword(
+        request.userPassword
+      );
+    }
     const response = await this.requestService.post<
-      CodefResetPasswordRequest,
-      CodefResponse<any>
+      CodefResetPasswordRequest | CodefTwoWaySecureNoInputRequest,
+      CodefSecureNoResponse | CodefSMSResponse | CodefPasswordChangedResponse
     >(
       'https://development.codef.io/v1/kr/public/hw/nip-cdc-list/finding-id-pw',
       request
@@ -36,31 +46,27 @@ export class CodefService {
 
     validateResponse(response);
 
-    if (response.data.continue2Way) {
-      if (response.data.method == 'secureNo')
-        return new CodefResetPasswordSecureNo2WayResponse(response.data);
-      else if (response.data.method == 'smsAuthNo')
-        return new CodefResetPasswordSMSAuthNo2WayResponse(response.data);
+    if (isTwoWay(response)) {
+      if (response.data.method === 'secureNo') {
+        const result = CodefSecureNoResponse.decode(response);
+        if (isLeft(result)) {
+          console.log('Invalid response', result.left);
+        }
+        if (isRight(result)) return result.right;
+      } else if (response.data.method === 'smsAuthNo') {
+        const result = CodefSMSResponse.decode(response);
+        if (isRight(result)) return result.right;
+      }
     } else {
-      return new CodefResetPasswordSuccessResponse(response.data);
+      const result = CodefPasswordChangedResponse.decode(response);
+      if (isRight(result)) return result.right;
     }
   }
 
   async getVaccinationRecords(
     id: string,
     password: string
-  ): Promise<CodefResponse<CodefMyVaccinationData>> {
-    const response = await this.requestService.post<
-      VaccinationRecordRequest,
-      CodefResponse<never>
-    >(
-      'https://development.codef.io/v1/kr/public/hw/nip-cdc-list/my-vaccination',
-      new VaccinationRecordRequest(
-        id,
-        this.passwordService.encryptPassword(password)
-      )
-    );
-
-    return validateResponse<CodefResponse<CodefMyVaccinationData>>(response);
+  ): Promise<CodefResponse<any>> {
+    return validateResponse<CodefResponse<any>>(null);
   }
 }

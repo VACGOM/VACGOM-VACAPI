@@ -1,8 +1,6 @@
 import { FetchMyVaccinationStrategy } from '../../../nip/strategies/fetchMyVaccination/FetchMyVaccinationStrategy';
 import { VaccinationRequest, VaccinationResponse } from '@vacgom/types';
 import { CodefService } from '../../codef.service';
-import { plainToInstance } from 'class-transformer';
-import { VaccinationRecordResponse } from './types/vaccination-record.response';
 import { DomainException } from '../../../exception/domain-exception';
 import { ErrorCode } from '../../../exception/error';
 import { UnhandledCodefException } from '../../exceptions/UnhandledCodefException';
@@ -19,16 +17,7 @@ export class ConcreteFetchMyVaccinationStrategy
     request: VaccinationRequest
   ): Promise<VaccinationResponse> {
     try {
-      const codefResponse = await this.codefService.getVaccinationRecords(
-        request.id,
-        request.password
-      );
-
-      const instance = plainToInstance(
-        VaccinationRecordResponse,
-        codefResponse
-      );
-      return instance.toVaccinationResponse();
+      throw new Error('Not implemented');
     } catch (e) {
       if (!this.isCodefException(e)) throw e;
 

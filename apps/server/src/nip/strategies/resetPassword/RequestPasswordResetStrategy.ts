@@ -1,10 +1,10 @@
-import { ResetPasswordRequest, SMSCodeRequest } from './request';
-import { SecureNoResponse, SMSResponse } from './response';
+import { NipResetPasswordRequest } from './request';
+import { NipResetPasswordResponse } from './response';
 
 export interface RequestPasswordResetStrategy {
   requestPasswordReset(
-    request: ResetPasswordRequest | SMSCodeRequest
-  ): Promise<SecureNoResponse | SMSResponse>;
+    request: NipResetPasswordRequest
+  ): Promise<NipResetPasswordResponse>;
 }
 
 export const RequestPasswordResetStrategy = Symbol(

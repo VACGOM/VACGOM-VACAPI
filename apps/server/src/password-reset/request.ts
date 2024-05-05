@@ -4,7 +4,7 @@ export const TwoWayInfoType = t.type({
   jobIndex: t.number,
   threadIndex: t.number,
   jti: t.string,
-  twoWayTimestamp: t.string,
+  twoWayTimestamp: t.number,
 });
 
 export type TwoWayInfo = t.TypeOf<typeof TwoWayInfoType>;

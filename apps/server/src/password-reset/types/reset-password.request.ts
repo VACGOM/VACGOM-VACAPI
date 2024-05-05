@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 import { IdentityType, TelecomType } from '@vacgom/types';
 
-export const ResetPasswordRequestNew = t.type({
+export const ResetPasswordRequest = t.type({
   name: t.string,
   identity: IdentityType,
   newPassword: t.string,
@@ -9,4 +9,4 @@ export const ResetPasswordRequestNew = t.type({
   phoneNumber: t.string,
 });
 
-export type ResetPasswordRequestType = t.TypeOf<typeof ResetPasswordRequestNew>;
+export type ResetPasswordRequest = t.TypeOf<typeof ResetPasswordRequest>;

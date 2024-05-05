@@ -1,7 +1,7 @@
 import { PasswordResetContext } from './password-reset.context';
-import { ResetPasswordRequest } from '../nip/strategies/resetPassword/request';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
+import { ResetPasswordRequest } from './types/reset-password.request';
 
 export enum StateType {
   INITIAL = 'initial',

@@ -1,7 +1,7 @@
 import { PasswordResetState, StateType } from '../password-reset.state';
 
 import { Injectable } from '@nestjs/common';
-import { ResetPasswordRequest } from '../../nip/strategies/resetPassword/request';
+import { ResetPasswordRequest } from '../types/reset-password.request';
 
 @Injectable()
 export class RequestPasswordReset extends PasswordResetState {

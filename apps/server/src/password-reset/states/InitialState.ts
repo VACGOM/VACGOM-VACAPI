@@ -1,10 +1,9 @@
 import { PasswordResetState, StateType } from '../password-reset.state';
 import { NipService } from '../../nip/nip.service';
 import { Injectable } from '@nestjs/common';
-import { ResetPasswordRequest } from '../../nip/strategies/resetPassword/request';
-import { SecureNoResponse } from '../../nip/strategies/resetPassword/response';
 import { DomainException } from '../../exception/domain-exception';
 import { ErrorCode } from '../../exception/error';
+import { ResetPasswordRequest } from '../types/reset-password.request';
 
 @Injectable()
 export class InitialState extends PasswordResetState {
@@ -17,24 +16,22 @@ export class InitialState extends PasswordResetState {
   ): Promise<boolean> {
     console.log(request, 'requestPasswordChange');
     this.context.request.data = request;
-    const response = await this.nipService.requestPasswordReset(
-      new ResetPasswordRequest(
-        request.name,
-        request.identity,
-        request.newPassword,
-        request.telecom,
-        request.phoneNumber
-      )
-    );
+    const response = await this.nipService.requestPasswordReset({
+      type: 'RequestResetPassword',
+      name: request.name,
+      identity: request.identity,
+      newPassword: request.newPassword,
+      telecom: request.telecom,
+      phoneNumber: request.phoneNumber,
+    });
 
-    if (!(response instanceof SecureNoResponse))
-      throw new DomainException(ErrorCode.CODEF_ERROR);
+    if (response.type != 'SecureNo')
+      throw new DomainException(ErrorCode.UNSUPPORTED_OPERATION);
 
     this.context.secureNoImage = response.secureNoImage;
     this.context.request.twoWayInfo = response.twoWayInfo;
 
     this.context.changeState(StateType.REQUEST_PASSWORD_RESET);
-
     return true;
   }
 }
