@@ -1,17 +1,15 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { DomainException } from './exception/domain-exception';
-import { Request, Response } from 'express';
-import { ErrorResponse } from './common/error-response';
+import { JsonRpcExceptionFilter } from './json-rpc/json-rpc.decorator';
+import { ExceptionFilter } from './json-rpc/exceptions/exception-filter';
 
-@Catch(DomainException)
-export class DomainExceptionFilter implements ExceptionFilter {
-  catch(exception: DomainException, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-
-    response
-      .status(400)
-      .json(ErrorResponse.of(exception.errorData, exception.errorData.message));
+@JsonRpcExceptionFilter(DomainException)
+export class DomainExceptionFilter implements ExceptionFilter<DomainException> {
+  catch(exception: DomainException, callback: any) {
+    callback({
+      code: -100,
+      message: exception.errorData.message,
+      errorData: exception.errorData,
+      data: exception.data,
+    });
   }
 }

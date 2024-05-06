@@ -8,17 +8,29 @@ import {
 import { DiscoveryModule } from '@nestjs/core';
 import { JsonRpcService } from './json-rpc.service';
 import { LoggerMiddleware } from './middleware';
+import { JsonRpcDefaultExceptionFilter } from './default-exception-filter';
+import { JsonRpcExceptionHandler } from './exceptions/exception-handler';
 
 @Module({
   imports: [DiscoveryModule],
-  providers: [JsonRpcService, Logger],
+  providers: [
+    JsonRpcService,
+    Logger,
+    JsonRpcDefaultExceptionFilter,
+    JsonRpcExceptionHandler,
+  ],
 })
 export class JsonRpcModule implements NestModule {
   static forRoot(): DynamicModule {
     return {
       global: true,
       module: JsonRpcModule,
-      providers: [JsonRpcService, Logger],
+      providers: [
+        JsonRpcService,
+        Logger,
+        JsonRpcDefaultExceptionFilter,
+        JsonRpcExceptionHandler,
+      ],
     };
   }
 

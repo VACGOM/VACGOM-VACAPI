@@ -8,6 +8,7 @@ import { VaccinationModule } from './vaccination/vaccination.module';
 import { NipModule } from './nip/nip.module';
 import { PasswordResetModule } from './password-reset/password-reset.module';
 import { JsonRpcModule } from './json-rpc/json-rpc.module';
+import { DomainExceptionFilter } from './exception-filter';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { JsonRpcModule } from './json-rpc/json-rpc.module';
     PasswordResetModule,
     JsonRpcModule.forRoot(),
   ],
+  providers: [DomainExceptionFilter],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

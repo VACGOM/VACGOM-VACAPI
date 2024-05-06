@@ -3,6 +3,7 @@ import { DiscoveryService, MetadataScanner, Reflector } from '@nestjs/core';
 import * as jayson from 'jayson';
 import {
   JSON_RPC_CONTROLLER,
+  JSON_RPC_EXCEPTION_FILTER,
   JSON_RPC_METHOD,
   JSON_RPC_PARAMS,
   JsonRpcParam,
@@ -10,8 +11,9 @@ import {
   RequestContext,
 } from './json-rpc.decorator';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { ExceptionFilter } from './exceptions/exception-filter';
+import { JsonRpcExceptionHandler } from './exceptions/exception-handler';
 import { JsonRpcError } from './error';
-import { DomainException } from '../exception/domain-exception';
 
 @Injectable()
 export class JsonRpcService implements OnModuleInit {
@@ -20,6 +22,7 @@ export class JsonRpcService implements OnModuleInit {
   constructor(
     private metadataScanner: MetadataScanner,
     private discoveryService: DiscoveryService,
+    private exceptionHandler: JsonRpcExceptionHandler<any>,
     private reflector: Reflector,
     private logger: Logger
   ) {}
@@ -60,7 +63,11 @@ export class JsonRpcService implements OnModuleInit {
 
     this.server.method(
       handlerName,
-      async (params: any | any[], context: any, callback: any) => {
+      async (
+        params: any,
+        context: RequestContext,
+        callback: jayson.JSONRPCCallbackType
+      ) => {
         try {
           const result = await methodRef.apply(
             instance,
@@ -69,21 +76,43 @@ export class JsonRpcService implements OnModuleInit {
               body: params,
             })
           );
+
           callback(null, result);
         } catch (error) {
-          if (error instanceof JsonRpcError) {
-            return callback(error);
+          try {
+            this.exceptionHandler.handle(error, callback);
+          } catch (e) {
+            callback(new JsonRpcError(-32603, e.message, e.data));
           }
-          if (error instanceof DomainException) {
-            return callback(new JsonRpcError(-32001, error.message, error));
-          }
-
-          console.log(error);
-
-          return callback(new JsonRpcError(-32000, 'Internal server error'));
         }
       }
     );
+  }
+
+  registerExceptionFilters() {
+    this.discoveryService
+      .getProviders()
+      .filter((wrapper) => wrapper.isDependencyTreeStatic())
+      .filter((wrapper) => wrapper.instance)
+      .forEach((provider: InstanceWrapper) => {
+        const { instance } = provider;
+
+        const exception: Error | undefined = Reflect.getOwnMetadata(
+          JSON_RPC_EXCEPTION_FILTER,
+          instance.constructor
+        );
+
+        if (!exception) {
+          return;
+        }
+
+        const exceptionFilter = instance as ExceptionFilter<any>;
+        this.exceptionHandler.registerFilter(exception.name, exceptionFilter);
+        this.logger.log(
+          `Registered exception filter ${exception.name}`,
+          JsonRpcService.name
+        );
+      });
   }
 
   registerMethods() {
@@ -126,5 +155,6 @@ export class JsonRpcService implements OnModuleInit {
 
   onModuleInit(): any {
     this.registerMethods();
+    this.registerExceptionFilters();
   }
 }
