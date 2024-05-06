@@ -34,6 +34,7 @@ export class SMSState extends PasswordResetState {
     });
 
     if (response.type == 'PasswordChangeFailed') {
+      this.context.changeState(StateType.REQUEST_PASSWORD_RESET);
       throw new DomainException(ErrorCode.CODEF_ERROR, response.result);
     }
     return true;
