@@ -1,6 +1,5 @@
 import { ContextFactory } from './context.factory';
 import { RedisContextRepositoryImpl } from './redis-context.repository';
-import { StateType } from './password-reset.state';
 import {
   Body,
   JsonRpcController,
@@ -29,15 +28,31 @@ export class PasswordResetController {
     const validation = ResetPasswordRequest.decode(body);
     if (isLeft(validation))
       throw new DomainException(ErrorCode.VALIDATION_ERROR, validation.left);
-
-    const context = this.factory.create(StateType.REQUEST_PASSWORD_RESET, {
-      stateType: StateType.INITIAL.toString(),
-      memberId: '형주',
-      requestInfo: null,
-      secureNoImage: null,
-      twoWayInfo: null,
-    });
-
+    const context = this.factory.createInitialState('형주');
     return context.requestPasswordChange(validation.right);
+  }
+
+  @JsonRpcMethod('requestSecureNoImage')
+  async requestSecureNoImage(@Req req: Request) {
+    const context = await this.repository.findByUserId('형주');
+    return context.requestSecureNoImage();
+  }
+
+  @JsonRpcMethod('inputSecureNo')
+  async inputSecureNo(@Body body: { secureNo: string }, @Req req: Request) {
+    const context = await this.repository.findByUserId('형주');
+    return context.inputSecureNo(body.secureNo);
+  }
+
+  @JsonRpcMethod('inputSMSCode')
+  async inputSMSCode(@Body body: { smsCode: string }, @Req req: Request) {
+    const context = await this.repository.findByUserId('형주');
+    return context.inputSMSCode(body.smsCode);
+  }
+
+  @JsonRpcMethod('changePassword')
+  async changePassword(@Req req: Request) {
+    const context = await this.repository.findByUserId('형주');
+    return context.changePassword();
   }
 }
