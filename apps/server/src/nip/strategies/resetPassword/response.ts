@@ -14,12 +14,19 @@ export type NipSecureNoResponse = NipResetPasswordBaseResponse<'SecureNo'> & {
 
 export type NipSMSResponse = NipResetPasswordBaseResponse<'SMS'>;
 
-export type PasswordChangedResponse =
-  NipResetPasswordBaseResponse<'PasswordChanged'> & {
-    userId: string;
-  };
+export type NipPasswordChangedResponse = {
+  type: 'PasswordChanged';
+  userId: string;
+};
+
+export type NipPasswordChangeFailedResponse = {
+  type: 'PasswordChangeFailed';
+  userId?: string;
+  result: string;
+};
 
 export type NipResetPasswordResponse =
   | NipSecureNoResponse
   | NipSMSResponse
-  | PasswordChangedResponse;
+  | NipPasswordChangedResponse
+  | NipPasswordChangeFailedResponse;

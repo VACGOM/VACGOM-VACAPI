@@ -97,7 +97,18 @@ export class Mapper {
         };
       }
     } else {
-      throw new Error();
+      if (response.data.resRegistrationStatus == '0') {
+        return {
+          type: 'PasswordChangeFailed',
+          userId: response.data.resLoginId,
+          result: response.data.resResultDesc,
+        };
+      } else {
+        return {
+          type: 'PasswordChanged',
+          userId: response.data.resLoginId,
+        };
+      }
     }
   }
 }

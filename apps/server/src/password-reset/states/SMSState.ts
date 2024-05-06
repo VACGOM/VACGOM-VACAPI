@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 
 import { NipService } from '../../nip/nip.service';
 import { ResetPasswordRequest } from '../types/reset-password.request';
+import { DomainException } from '../../exception/domain-exception';
+import { ErrorCode } from '../../exception/error';
 
 @Injectable()
 export class SMSState extends PasswordResetState {
@@ -31,6 +33,9 @@ export class SMSState extends PasswordResetState {
       twoWayInfo: this.context.data.twoWayInfo,
     });
 
+    if (response.type == 'PasswordChangeFailed') {
+      throw new DomainException(ErrorCode.CODEF_ERROR, response.result);
+    }
     return true;
   }
 }

@@ -35,7 +35,9 @@ export type CodefSMSResponse = t.TypeOf<typeof CodefSMSResponse>;
 
 export const CodefPasswordChangedResponse = CodefResponse(
   t.type({
-    userId: t.string,
+    resLoginId: t.string,
+    resRegistrationStatus: t.string,
+    resResultDesc: t.string,
   })
 );
 
