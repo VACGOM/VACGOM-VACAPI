@@ -63,13 +63,22 @@ export class PasswordResetContext {
   }
 
   private async operate<T>(fn: () => Promise<T>): Promise<ContextOutput<T>> {
-    const result = await fn();
-    await this.save();
+    try {
+      const result = await fn();
 
-    return {
-      success: true,
-      state: this.data.stateType,
-      data: result,
-    };
+      return {
+        success: true,
+        state: this.data.stateType,
+        data: result,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        state: this.data.stateType,
+        data: e,
+      };
+    } finally {
+      await this.save();
+    }
   }
 }
