@@ -35,4 +35,14 @@ export class ContextFactory {
   ): PasswordResetContext {
     return new PasswordResetContext(this.states, this.repository, state, data);
   }
+
+  public createInitialState(memberId: string): PasswordResetContext {
+    return this.create(StateType.INITIAL, {
+      memberId: memberId,
+      stateType: StateType.INITIAL.toString(),
+      requestInfo: null,
+      secureNoImage: null,
+      twoWayInfo: null,
+    });
+  }
 }
