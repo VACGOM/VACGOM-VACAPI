@@ -19,15 +19,11 @@ export class JsonRpcExceptionHandler<T extends Error> {
   handle(exception: T, callback: JSONRPCCallbackType): void {
     const exceptionType = Object.getPrototypeOf(exception).constructor.name;
     const filter = this.exceptionFilters[exceptionType];
-    
+
     if (!filter) {
       throw exception;
     }
 
-    try {
-      filter.catch(exception, callback);
-    } catch (e) {
-      callback(e, e);
-    }
+    filter.catch(exception, callback);
   }
 }

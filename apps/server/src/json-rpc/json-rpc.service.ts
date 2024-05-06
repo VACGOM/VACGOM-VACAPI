@@ -13,7 +13,6 @@ import {
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { ExceptionFilter } from './exceptions/exception-filter';
 import { JsonRpcExceptionHandler } from './exceptions/exception-handler';
-import { JsonRpcError } from './error';
 
 @Injectable()
 export class JsonRpcService implements OnModuleInit {
@@ -63,11 +62,7 @@ export class JsonRpcService implements OnModuleInit {
 
     this.server.method(
       handlerName,
-      async (
-        params: any,
-        context: RequestContext,
-        callback: jayson.JSONRPCCallbackType
-      ) => {
+      async (params: any, context: RequestContext, callback: any) => {
         try {
           const result = await methodRef.apply(
             instance,
@@ -82,7 +77,12 @@ export class JsonRpcService implements OnModuleInit {
           try {
             this.exceptionHandler.handle(error, callback);
           } catch (e) {
-            callback(new JsonRpcError(-32603, e.message, e.data));
+            this.logger.error(e);
+            callback({
+              code: -32000,
+              message: 'Server error',
+              data: e,
+            });
           }
         }
       }
