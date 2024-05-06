@@ -4,6 +4,7 @@ import { isTwoWay } from '../../types/reset-password/utils';
 import { NipResetPasswordResponse } from '../../../nip/strategies/resetPassword/response';
 import {
   CodefResetPasswordRequest,
+  CodefTwoWayRefreshSecureNoRequest,
   CodefTwoWaySecureNoInputRequest,
   CodefTwoWaySMSInputRequest,
 } from '../../types/reset-password/reset-password.request';
@@ -62,6 +63,27 @@ export class Mapper {
           twoWayTimestamp: request.twoWayInfo.twoWayTimestamp,
         },
         smsAuthNo: request.smsAuthNo,
+        is2Way: true,
+      };
+
+      return codefRequest;
+    } else if (request.type == 'RefreshSecureNo') {
+      const codefRequest: CodefTwoWayRefreshSecureNoRequest = {
+        organization: '0011',
+        authMethod: '0',
+        timeout: '170',
+        userName: request.name,
+        identity: request.identity.to9DigitRnnString(),
+        userPassword: request.newPassword,
+        telecom: request.telecom.getValue().toString(),
+        phoneNo: request.phoneNumber,
+        twoWayInfo: {
+          jobIndex: request.twoWayInfo.jobIndex,
+          threadIndex: request.twoWayInfo.threadIndex,
+          jti: request.twoWayInfo.jti,
+          twoWayTimestamp: request.twoWayInfo.twoWayTimestamp,
+        },
+        secureNoRefresh: '1',
         is2Way: true,
       };
 
