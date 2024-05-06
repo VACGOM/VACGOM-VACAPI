@@ -1,18 +1,35 @@
-import { Controller, Get } from '@nestjs/common';
-import { Identity, Telecom } from '@vacgom/types';
 import { ContextFactory } from './context.factory';
 import { RedisContextRepositoryImpl } from './redis-context.repository';
 import { StateType } from './password-reset.state';
+import {
+  Body,
+  JsonRpcController,
+  JsonRpcMethod,
+  Req,
+} from '../json-rpc/json-rpc.decorator';
+import { Injectable } from '@nestjs/common';
+import { ResetPasswordRequest } from './types/reset-password.request';
+import { isLeft } from 'fp-ts/These';
+import { DomainException } from '../exception/domain-exception';
+import { ErrorCode } from '../exception/error';
 
-@Controller('password-reset')
+@Injectable()
+@JsonRpcController('password-reset')
 export class PasswordResetController {
   constructor(
     private factory: ContextFactory,
     private repository: RedisContextRepositoryImpl
   ) {}
 
-  @Get('/')
-  async test() {
+  @JsonRpcMethod('requestPasswordReset')
+  async requestPasswordReset(
+    @Body body: ResetPasswordRequest,
+    @Req req: Request
+  ) {
+    const validation = ResetPasswordRequest.decode(body);
+    if (isLeft(validation))
+      throw new DomainException(ErrorCode.VALIDATION_ERROR, validation.left);
+
     const context = this.factory.create(StateType.REQUEST_PASSWORD_RESET, {
       stateType: StateType.INITIAL.toString(),
       memberId: '형주',
@@ -21,31 +38,6 @@ export class PasswordResetController {
       twoWayInfo: null,
     });
 
-    await context.requestPasswordChange({
-      name: '성형주',
-      identity: Identity.parse('030912-3'),
-      newPassword: '1234',
-      telecom: Telecom.fromString('SKT'),
-      phoneNumber: '01054763508',
-    });
-
-    const s = await context.requestSecureNoImage();
-    console.log(context);
-    return context.data.stateType;
-  }
-
-  @Get('/test')
-  async test2() {
-    const context = await this.repository.findByUserId('형주');
-
-    await context.requestSecureNoImage();
-    const s = await context.inputSecureNo('64995');
-  }
-
-  @Get('/test2')
-  async test3() {
-    const context = await this.repository.findByUserId('형주');
-    console.log(context);
-    return context.requestSecureNoImage();
+    return context.requestPasswordChange(validation.right);
   }
 }
