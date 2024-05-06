@@ -31,7 +31,7 @@ export class InitialState extends PasswordResetState {
     this.context.data.secureNoImage = response.secureNoImage;
     this.context.data.twoWayInfo = response.twoWayInfo;
 
-    this.context.changeState(StateType.REQUEST_PASSWORD_RESET);
+    this.context.changeState(StateType.SECURE_NO);
     return true;
   }
 }
