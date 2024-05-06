@@ -11,6 +11,7 @@ import {
 } from './json-rpc.decorator';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { JsonRpcError } from './error';
+import { DomainException } from '../exception/domain-exception';
 
 @Injectable()
 export class JsonRpcService implements OnModuleInit {
@@ -73,6 +74,10 @@ export class JsonRpcService implements OnModuleInit {
           if (error instanceof JsonRpcError) {
             return callback(error);
           }
+          if (error instanceof DomainException) {
+            return callback(new JsonRpcError(-32001, error.message, error));
+          }
+
           console.log(error);
 
           return callback(new JsonRpcError(-32000, 'Internal server error'));
