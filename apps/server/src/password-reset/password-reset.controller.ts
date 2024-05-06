@@ -7,7 +7,11 @@ import {
   Req,
 } from '../json-rpc/json-rpc.decorator';
 import { Injectable } from '@nestjs/common';
-import { ResetPasswordRequest } from './types/reset-password.request';
+import {
+  InputSecureNoRequest,
+  InputSMSCodeRequest,
+  ResetPasswordRequest,
+} from './types/reset-password.request';
 import { isLeft } from 'fp-ts/These';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
@@ -39,15 +43,15 @@ export class PasswordResetController {
   }
 
   @JsonRpcMethod('inputSecureNo')
-  async inputSecureNo(@Body body: { secureNo: string }, @Req req: Request) {
+  async inputSecureNo(@Body body: InputSecureNoRequest, @Req req: Request) {
     const context = await this.repository.findByUserId('형주');
-    return context.inputSecureNo(body.secureNo);
+    return context.inputSecureNo(body);
   }
 
   @JsonRpcMethod('inputSMSCode')
-  async inputSMSCode(@Body body: { smsCode: string }, @Req req: Request) {
+  async inputSMSCode(@Body body: InputSMSCodeRequest, @Req req: Request) {
     const context = await this.repository.findByUserId('형주');
-    return context.inputSMSCode(body.smsCode);
+    return context.inputSMSCode(body);
   }
 
   @JsonRpcMethod('changePassword')

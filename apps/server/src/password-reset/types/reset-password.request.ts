@@ -10,3 +10,13 @@ export const ResetPasswordRequest = t.type({
 });
 
 export type ResetPasswordRequest = t.TypeOf<typeof ResetPasswordRequest>;
+
+export const InputSecureNoRequest = t.type({
+  secureNo: t.string,
+});
+export type InputSecureNoRequest = t.TypeOf<typeof InputSecureNoRequest>;
+
+export const InputSMSCodeRequest = t.type({
+  smsCode: t.string,
+});
+export type InputSMSCodeRequest = t.TypeOf<typeof InputSMSCodeRequest>;

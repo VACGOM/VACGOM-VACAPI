@@ -2,9 +2,14 @@ import { PasswordResetState, StateType } from './password-reset.state';
 import { States } from './types/state';
 import { ContextRepository } from './context.repository';
 import { isLeft } from 'fp-ts/These';
-import { ResetPasswordRequest } from './types/reset-password.request';
+import {
+  InputSecureNoRequest,
+  InputSMSCodeRequest,
+  ResetPasswordRequest,
+} from './types/reset-password.request';
 import { Context } from './types/context';
 import { ContextOutput } from './types/context-output';
+import { ValidationError } from './exception/ValidationError';
 
 export class PasswordResetContext {
   state: PasswordResetState;
@@ -33,11 +38,8 @@ export class PasswordResetContext {
   ): Promise<ContextOutput<boolean>> {
     const decoded = ResetPasswordRequest.decode(request);
     if (isLeft(decoded)) {
-      console.log(decoded.left);
-      throw new Error('Invalid request');
+      throw new ValidationError(decoded.left);
     }
-
-    const right = decoded.right;
 
     return this.operate(() => this.state.requestPasswordChange(decoded.right));
   }
@@ -46,12 +48,26 @@ export class PasswordResetContext {
     return this.operate(() => this.state.requestSecureNoImage());
   }
 
-  public async inputSecureNo(secureNo: string): Promise<ContextOutput<any>> {
-    return this.operate(() => this.state.inputSecureNo(secureNo));
+  public async inputSecureNo(
+    request: InputSecureNoRequest
+  ): Promise<ContextOutput<any>> {
+    const decoded = InputSecureNoRequest.decode(request);
+    if (isLeft(decoded)) {
+      throw new ValidationError(decoded.left);
+    }
+
+    return this.operate(() => this.state.inputSecureNo(decoded.right.secureNo));
   }
 
-  public async inputSMSCode(smsCode: string): Promise<ContextOutput<any>> {
-    return this.operate(() => this.state.inputSMSCode(smsCode));
+  public async inputSMSCode(
+    request: InputSMSCodeRequest
+  ): Promise<ContextOutput<any>> {
+    const decoded = InputSMSCodeRequest.decode(request);
+    if (isLeft(decoded)) {
+      throw new ValidationError(decoded.left);
+    }
+
+    return this.operate(() => this.state.inputSMSCode(decoded.right.smsCode));
   }
 
   public async changePassword(): Promise<ContextOutput<any>> {
