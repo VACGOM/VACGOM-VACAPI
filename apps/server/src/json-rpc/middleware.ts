@@ -12,6 +12,7 @@ export class LoggerMiddleware implements NestMiddleware {
     };
 
     const server = this.jsonService.getServer();
+
     server.call(req.body, context, function (err, result) {
       if (err) return res.send(err);
       res.send(result || {});

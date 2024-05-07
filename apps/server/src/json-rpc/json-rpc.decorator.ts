@@ -1,12 +1,24 @@
-import { applyDecorators, Injectable, SetMetadata } from '@nestjs/common';
+import {
+  applyDecorators,
+  Injectable,
+  NestMiddleware,
+  SetMetadata,
+} from '@nestjs/common';
+import { Request } from 'express';
 
 export const JSON_RPC_CONTROLLER = Symbol('JSON_RPC_CONTROLLER');
 export const JSON_RPC_METHOD = Symbol('JSON_RPC_METHOD');
 export const JSON_RPC_PARAMS = Symbol('JSON_RPC_PARAMS');
 export const JSON_RPC_EXCEPTION_FILTER = Symbol('JSON_RPC_EXCEPTION_FILTER');
 
-export function JsonRpcController(controllerName: string): ClassDecorator {
-  return SetMetadata(JSON_RPC_CONTROLLER, controllerName);
+export function JsonRpcController(
+  controllerName: string,
+  middlewares: NestMiddleware[]
+): ClassDecorator {
+  return applyDecorators(
+    SetMetadata(JSON_RPC_CONTROLLER, controllerName),
+    SetMetadata('middlewares', middlewares)
+  );
 }
 
 export function JsonRpcMethod(methodName: string) {

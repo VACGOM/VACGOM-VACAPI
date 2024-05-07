@@ -17,7 +17,7 @@ import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
 
 @Injectable()
-@JsonRpcController('password-reset')
+@JsonRpcController('password-reset', [])
 export class PasswordResetController {
   constructor(
     private factory: ContextFactory,
