@@ -104,7 +104,7 @@ export class JsonRpcService implements OnModuleInit {
 
     this.server.method(
       handlerName,
-      this.createHandler(methodRef, instance, jsonRpcParams)
+      this.createHandler(handlerName, methodRef, instance, jsonRpcParams)
     );
   }
 
@@ -149,12 +149,13 @@ export class JsonRpcService implements OnModuleInit {
   }
 
   private createHandler(
+    handlerName: string,
     methodRef: Function,
     instance: any,
     jsonRpcParams: JsonRpcParam[]
   ) {
     return async (params: any, context: RequestContext, callback: any) => {
-      let ms = this.middlewareManager.getMiddlewares().slice();
+      let ms = this.middlewareManager.getMiddlewares(handlerName);
 
       await new Promise((resolve) => {
         const next = () => {
