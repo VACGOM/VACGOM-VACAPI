@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { JsonRpcService } from './json-rpc.service';
 
 @Injectable()
-export class LoggerMiddleware implements NestMiddleware {
+export class JsonRpcServerMiddleware implements NestMiddleware {
   constructor(private jsonService: JsonRpcService) {}
 
   use(req: Request, res: Response, next: NextFunction) {

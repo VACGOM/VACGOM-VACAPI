@@ -8,11 +8,11 @@ import {
 } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { JsonRpcService } from './json-rpc.service';
-import { LoggerMiddleware } from './middleware';
 
 import { JsonRpcExceptionHandler } from './exceptions/exception-handler';
 import { MiddlewareManager } from './middleware-manager';
 import { JsonRpcMiddlewareInterface } from './json-rpc-middleware.interface';
+import { JsonRpcServerMiddleware } from './middleware';
 
 export type JsonRpcModuleConfiguration = {
   middlewares: {
@@ -43,6 +43,6 @@ export class JsonRpcModule implements NestModule {
   }
 
   configure(consumer: MiddlewareConsumer): any {
-    consumer.apply(LoggerMiddleware).forRoutes('json-rpc');
+    consumer.apply(JsonRpcServerMiddleware).forRoutes('json-rpc');
   }
 }
