@@ -1,10 +1,16 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { DiscoveryService, MetadataScanner, Reflector } from '@nestjs/core';
+import { Injectable, Logger, OnModuleInit, Type } from '@nestjs/common';
+import {
+  DiscoveryService,
+  MetadataScanner,
+  ModuleRef,
+  Reflector,
+} from '@nestjs/core';
 import * as jayson from 'jayson';
 import {
   JSON_RPC_CONTROLLER,
   JSON_RPC_EXCEPTION_FILTER,
   JSON_RPC_METHOD,
+  JSON_RPC_MIDDLEWARE,
   JSON_RPC_PARAMS,
   JsonRpcParam,
   JsonRpcParamsMetadata,
@@ -15,6 +21,7 @@ import { ExceptionFilter } from './exceptions/exception-filter';
 import { JsonRpcExceptionHandler } from './exceptions/exception-handler';
 import { JsonRpcMiddlewareInterface } from './json-rpc-middleware.interface';
 import { AuthMiddleware } from '../password-reset/auth.middleware';
+import { MiddlewareManager } from './middleware-manager';
 
 @Injectable()
 export class JsonRpcService implements OnModuleInit {
@@ -25,7 +32,9 @@ export class JsonRpcService implements OnModuleInit {
     private discoveryService: DiscoveryService,
     private exceptionHandler: JsonRpcExceptionHandler<any>,
     private reflector: Reflector,
-    private logger: Logger
+    private logger: Logger,
+    private middlewareManager: MiddlewareManager,
+    private moduleRef: ModuleRef
   ) {}
 
   public getServer(): jayson.Server {
@@ -95,7 +104,7 @@ export class JsonRpcService implements OnModuleInit {
 
     this.server.method(
       handlerName,
-      this.createHandler(methodRef, instance, jsonRpcParams, middlewares)
+      this.createHandler(methodRef, instance, jsonRpcParams)
     );
   }
 
@@ -142,17 +151,18 @@ export class JsonRpcService implements OnModuleInit {
   private createHandler(
     methodRef: Function,
     instance: any,
-    jsonRpcParams: JsonRpcParam[],
-    middlewares: JsonRpcMiddlewareInterface[]
+    jsonRpcParams: JsonRpcParam[]
   ) {
     return async (params: any, context: RequestContext, callback: any) => {
-      let ms = middlewares.slice();
+      let ms = this.middlewareManager.getMiddlewares().slice();
 
       await new Promise((resolve) => {
-        const next1 = () => {
+        const next = () => {
           if (ms.length > 0) {
             const middleware = ms.shift();
-            const promise = middleware.use(context.req, callback, next1);
+            const instance = this.getMiddlewareInstance(middleware);
+
+            const promise = instance.use(context.req, callback, next);
             if (promise instanceof Promise) {
               promise.catch((err) => {
                 this.exceptionHandler.handle(err, callback);
@@ -163,7 +173,7 @@ export class JsonRpcService implements OnModuleInit {
           }
         };
 
-        next1();
+        next();
       }).catch((err) => {
         console.log('ERR');
         this.exceptionHandler.handle(err, callback);
@@ -185,5 +195,27 @@ export class JsonRpcService implements OnModuleInit {
         callback(null, result);
       }
     };
+  }
+
+  private getMiddlewareInstance(
+    middleware: Type<JsonRpcMiddlewareInterface>
+  ): JsonRpcMiddlewareInterface {
+    const instances = this.discoveryService
+      .getProviders()
+      .filter((wrapper) => wrapper.isDependencyTreeStatic())
+      .filter((wrapper) => wrapper.instance)
+      .filter((provider: InstanceWrapper) => {
+        const { instance } = provider;
+        return Reflect.getOwnMetadata(
+          JSON_RPC_MIDDLEWARE,
+          instance.constructor
+        );
+      })
+      .filter((provider: InstanceWrapper) => {
+        const { instance } = provider;
+        return instance.constructor.name == middleware.name;
+      });
+
+    return instances[0].instance;
   }
 }

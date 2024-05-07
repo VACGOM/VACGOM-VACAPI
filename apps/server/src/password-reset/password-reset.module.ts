@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { InitialState } from './states/InitialState';
 import { RequestPasswordReset } from './states/RequestPasswordReset';
 import { SecureNoState } from './states/SecureNoState';
@@ -8,7 +8,7 @@ import { ContextMapper } from './mapper/mapper';
 import { ContextFactory } from './context.factory';
 import { RedisContextRepositoryImpl } from './redis-context.repository';
 import { SMSState } from './states/SMSState';
-import * as jayson from 'jayson';
+import { AuthMiddleware } from './auth.middleware';
 
 @Module({
   imports: [NipModule],
@@ -23,20 +23,11 @@ import * as jayson from 'jayson';
     ContextFactory,
     SMSState,
     PasswordResetController,
+    AuthMiddleware,
     {
       provide: 'ContextRepository',
       useClass: RedisContextRepositoryImpl,
     },
   ],
 })
-export class PasswordResetModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    const server = new jayson.Server({
-      add: function (args, callback) {
-        callback(null, args[0] + args[1]);
-      },
-    });
-
-    consumer.apply(server.middleware()).forRoutes('password-reset');
-  }
-}
+export class PasswordResetModule {}

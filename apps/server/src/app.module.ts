@@ -9,6 +9,7 @@ import { NipModule } from './nip/nip.module';
 import { PasswordResetModule } from './password-reset/password-reset.module';
 import { JsonRpcModule } from './json-rpc/json-rpc.module';
 import { DomainExceptionFilter } from './exception-filter';
+import { AuthMiddleware } from './password-reset/auth.middleware';
 
 @Module({
   imports: [
@@ -21,7 +22,14 @@ import { DomainExceptionFilter } from './exception-filter';
     VaccinationModule,
     NipModule,
     PasswordResetModule,
-    JsonRpcModule.forRoot(),
+    JsonRpcModule.forRoot({
+      middlewares: [
+        {
+          methods: ['password-reset.requestPasswordReset'],
+          middleware: AuthMiddleware,
+        },
+      ],
+    }),
   ],
   providers: [DomainExceptionFilter],
 })

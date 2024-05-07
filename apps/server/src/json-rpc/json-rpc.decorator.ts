@@ -10,6 +10,7 @@ export const JSON_RPC_CONTROLLER = Symbol('JSON_RPC_CONTROLLER');
 export const JSON_RPC_METHOD = Symbol('JSON_RPC_METHOD');
 export const JSON_RPC_PARAMS = Symbol('JSON_RPC_PARAMS');
 export const JSON_RPC_EXCEPTION_FILTER = Symbol('JSON_RPC_EXCEPTION_FILTER');
+export const JSON_RPC_MIDDLEWARE = Symbol('JSON_RPC_MIDDLEWARE');
 
 export function JsonRpcController(
   controllerName: string,
@@ -19,6 +20,10 @@ export function JsonRpcController(
     SetMetadata(JSON_RPC_CONTROLLER, controllerName),
     SetMetadata('middlewares', middlewares)
   );
+}
+
+export function JsonRpcMiddleware(): ClassDecorator {
+  return SetMetadata(JSON_RPC_MIDDLEWARE, true);
 }
 
 export function JsonRpcMethod(methodName: string) {

@@ -5,6 +5,7 @@ import { JSONRPCCallbackType } from 'jayson';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
 import jwt from 'jsonwebtoken';
+import { JsonRpcMiddleware } from '../json-rpc/json-rpc.decorator';
 
 export type JwtPayload = {
   sub: string;
@@ -16,6 +17,7 @@ export type AuthenticatedRequest = {
 };
 
 @Injectable()
+@JsonRpcMiddleware()
 export class AuthMiddleware implements JsonRpcMiddlewareInterface {
   async use(
     req: Request & { userId: string },
