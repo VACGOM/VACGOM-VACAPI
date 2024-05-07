@@ -5,6 +5,8 @@ import * as process from 'node:process';
 import { PasswordResetContext } from './password-reset.context';
 import { ContextMapper } from './mapper/mapper';
 import { Context } from './types/context';
+import { DomainException } from '../exception/domain-exception';
+import { ErrorCode } from '../exception/error';
 
 @Injectable()
 export class RedisContextRepositoryImpl implements ContextRepository {
@@ -12,10 +14,10 @@ export class RedisContextRepositoryImpl implements ContextRepository {
 
   constructor(private mapper: ContextMapper) {}
 
-  async findByUserId(userId: string): Promise<PasswordResetContext | null> {
+  async getByUserId(userId: string): Promise<PasswordResetContext> {
     const data = await this.redisClient.get(userId);
     if (!data) {
-      return null;
+      throw new DomainException(ErrorCode.CHALLENGE_NOT_FOUND);
     }
 
     const res = this.mapper.toContext(JSON.parse(data));
