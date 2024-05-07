@@ -23,7 +23,7 @@ export function JsonRpcController(
 }
 
 export function JsonRpcMiddleware(): ClassDecorator {
-  return SetMetadata(JSON_RPC_MIDDLEWARE, true);
+  return applyDecorators(SetMetadata(JSON_RPC_MIDDLEWARE, true), Injectable);
 }
 
 export function JsonRpcMethod(methodName: string) {

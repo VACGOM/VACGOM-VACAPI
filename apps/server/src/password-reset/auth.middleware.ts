@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { NextFunction, Request } from 'express';
 import { JsonRpcMiddlewareInterface } from '../json-rpc/json-rpc-middleware.interface';
 import { JSONRPCCallbackType } from 'jayson';
@@ -16,7 +15,6 @@ export type AuthenticatedRequest = {
   userId: string;
 };
 
-@Injectable()
 @JsonRpcMiddleware()
 export class AuthMiddleware implements JsonRpcMiddlewareInterface {
   async use(
