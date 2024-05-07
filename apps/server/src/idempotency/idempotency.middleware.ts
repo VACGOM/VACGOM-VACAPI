@@ -1,32 +1,34 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { NextFunction, Request, Response } from 'express';
-import * as crypto from 'crypto';
 import { IdempotencyService } from './idempotency.service';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
+import { JsonRpcMiddleware } from '../json-rpc/json-rpc.decorator';
+import { JsonRpcMiddlewareInterface } from '../json-rpc/json-rpc-middleware.interface';
+import * as crypto from 'node:crypto';
+import { JSONRPCCallbackType } from 'jayson';
+import { Request } from 'express';
 
-@Injectable()
-export class IdempotencyMiddleware implements NestMiddleware {
+@JsonRpcMiddleware()
+export class IdempotencyMiddleware implements JsonRpcMiddlewareInterface {
   constructor(private idempotencyService: IdempotencyService) {}
 
-  async use(req: Request, res: Response, next: NextFunction) {
+  async use(
+    req: Request,
+    callback: JSONRPCCallbackType,
+    next: (err: any) => void
+  ): Promise<void> {
     const result = await this.idempotencyService.process(
       this.generateIdempotencyKey(req),
       next.bind(this)
     );
 
     if (!result) {
+      console.log('Duplicated request');
       throw new DomainException(ErrorCode.DUPLICATED_REQUEST);
     }
   }
 
   private generateIdempotencyKey(req: Request): string {
-    const payload = JSON.stringify({
-      baseUrl: req.baseUrl,
-      method: req.method,
-      headers: req.headers,
-      body: req.body,
-    });
+    const payload = req.headers.authorization;
 
     return crypto.createHash('sha256').update(payload).digest('hex');
   }
