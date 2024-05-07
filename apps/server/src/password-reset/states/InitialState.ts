@@ -1,9 +1,9 @@
-import { PasswordResetState, StateType } from '../password-reset.state';
+import { PasswordResetState } from '../password-reset.state';
 import { NipService } from '../../nip/nip.service';
 import { Injectable } from '@nestjs/common';
 import { DomainException } from '../../exception/domain-exception';
 import { ErrorCode } from '../../exception/error';
-import { ResetPasswordRequest } from '../types/reset-password.request';
+import { ResetPasswordRequest, StateType } from '@vacgom/types';
 
 @Injectable()
 export class InitialState extends PasswordResetState {

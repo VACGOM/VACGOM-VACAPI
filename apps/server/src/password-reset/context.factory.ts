@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PasswordResetContext } from './password-reset.context';
-import { StateType } from './password-reset.state';
 import { InitialState } from './states/InitialState';
 import { SecureNoState } from './states/SecureNoState';
 import { RequestPasswordReset } from './states/RequestPasswordReset';
@@ -8,6 +7,7 @@ import { States } from './types/state';
 import { ContextRepository } from './context.repository';
 import { Context } from './types/context';
 import { SMSState } from './states/SMSState';
+import { StateType } from '@vacgom/types';
 
 @Injectable()
 export class ContextFactory {

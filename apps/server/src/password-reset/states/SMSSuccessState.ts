@@ -1,8 +1,8 @@
-import { PasswordResetState, StateType } from '../password-reset.state';
+import { PasswordResetState } from '../password-reset.state';
 import { Injectable } from '@nestjs/common';
 
 import { NipService } from '../../nip/nip.service';
-import { ResetPasswordRequest } from '../types/reset-password.request';
+import { ResetPasswordRequest, StateType } from '@vacgom/types';
 
 @Injectable()
 export class SMSState extends PasswordResetState {

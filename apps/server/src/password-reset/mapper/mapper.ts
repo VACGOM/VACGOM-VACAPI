@@ -1,9 +1,9 @@
 import { PasswordResetContext } from '../password-reset.context';
 import { ContextFactory } from '../context.factory';
-import { StateType } from '../password-reset.state';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { isLeft } from 'fp-ts/These';
 import { Context } from '../types/context';
+import { StateType } from '@vacgom/types';
 
 @Injectable()
 export class ContextMapper {

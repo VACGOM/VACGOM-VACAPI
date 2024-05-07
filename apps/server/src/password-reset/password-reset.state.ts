@@ -1,14 +1,7 @@
 import { PasswordResetContext } from './password-reset.context';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
-import { ResetPasswordRequest } from './types/reset-password.request';
-
-export enum StateType {
-  INITIAL = 'initial',
-  REQUEST_PASSWORD_RESET = 'requestPasswordReset',
-  SECURE_NO = 'secureNo',
-  SMS = 'sms',
-}
+import { ResetPasswordRequest } from '@vacgom/types';
 
 export abstract class PasswordResetState {
   protected context: PasswordResetContext;

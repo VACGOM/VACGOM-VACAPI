@@ -7,15 +7,15 @@ import {
   Req,
 } from '../json-rpc/json-rpc.decorator';
 import { Injectable } from '@nestjs/common';
-import {
-  InputSecureNoRequest,
-  InputSMSCodeRequest,
-  ResetPasswordRequest,
-} from './types/reset-password.request';
 import { isLeft } from 'fp-ts/These';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
 import { AuthenticatedRequest } from './auth.middleware';
+import {
+  InputSecureNoRequest,
+  InputSMSCodeRequest,
+  ResetPasswordRequest,
+} from '@vacgom/types';
 
 @Injectable()
 @JsonRpcController('password-reset', [])

@@ -1,15 +1,17 @@
-import { PasswordResetState, StateType } from './password-reset.state';
+import { PasswordResetState } from './password-reset.state';
 import { States } from './types/state';
 import { ContextRepository } from './context.repository';
 import { isLeft } from 'fp-ts/These';
+
+import { Context } from './types/context';
+import { ValidationError } from './exception/ValidationError';
 import {
+  ContextOutput,
   InputSecureNoRequest,
   InputSMSCodeRequest,
   ResetPasswordRequest,
-} from './types/reset-password.request';
-import { Context } from './types/context';
-import { ContextOutput } from './types/context-output';
-import { ValidationError } from './exception/ValidationError';
+  StateType,
+} from '@vacgom/types';
 
 export class PasswordResetContext {
   state: PasswordResetState;
@@ -86,17 +88,9 @@ export class PasswordResetContext {
     try {
       const result = await fn();
 
-      return {
-        success: true,
-        state: this.data.stateType,
-        data: result,
-      };
+      return ContextOutput.success(this.data.stateType as StateType, result);
     } catch (e) {
-      return {
-        success: false,
-        state: this.data.stateType,
-        data: e,
-      };
+      return ContextOutput.failure(this.data.stateType as StateType, e);
     } finally {
       await this.save();
     }
