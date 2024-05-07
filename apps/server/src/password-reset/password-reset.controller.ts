@@ -15,6 +15,7 @@ import {
 import { isLeft } from 'fp-ts/These';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
+import { AuthenticatedRequest } from './auth.middleware';
 
 @Injectable()
 @JsonRpcController('password-reset', [])
@@ -27,42 +28,48 @@ export class PasswordResetController {
   @JsonRpcMethod('requestPasswordReset')
   async requestPasswordReset(
     @Body body: ResetPasswordRequest,
-    @Req req: Request
+    @Req req: AuthenticatedRequest
   ) {
     const validation = ResetPasswordRequest.decode(body);
     if (isLeft(validation))
       throw new DomainException(ErrorCode.VALIDATION_ERROR, validation.left);
-    const context = this.factory.createInitialState('형주');
+    const context = this.factory.createInitialState(req.userId);
     return context.requestPasswordChange(validation.right);
   }
 
   @JsonRpcMethod('requestSecureNoImage')
-  async requestSecureNoImage(@Req req: Request) {
-    const context = await this.repository.findByUserId('형주');
+  async requestSecureNoImage(@Req req: AuthenticatedRequest) {
+    const context = await this.repository.getByUserId(req.userId);
     return context.requestSecureNoImage();
   }
 
   @JsonRpcMethod('inputSecureNo')
-  async inputSecureNo(@Body body: InputSecureNoRequest, @Req req: Request) {
-    const context = await this.repository.findByUserId('형주');
+  async inputSecureNo(
+    @Body body: InputSecureNoRequest,
+    @Req req: AuthenticatedRequest
+  ) {
+    const context = await this.repository.getByUserId(req.userId);
     return context.inputSecureNo(body);
   }
 
   @JsonRpcMethod('inputSMSCode')
-  async inputSMSCode(@Body body: InputSMSCodeRequest, @Req req: Request) {
-    const context = await this.repository.findByUserId('형주');
+  async inputSMSCode(
+    @Body body: InputSMSCodeRequest,
+    @Req req: AuthenticatedRequest
+  ) {
+    const context = await this.repository.getByUserId(req.userId);
     return context.inputSMSCode(body);
   }
 
   @JsonRpcMethod('changePassword')
-  async changePassword(@Req req: Request) {
-    const context = await this.repository.findByUserId('형주');
+  async changePassword(@Req req: AuthenticatedRequest) {
+    const context = await this.repository.getByUserId(req.userId);
     return context.changePassword();
   }
 
   @JsonRpcMethod('getCurrentState')
-  async currentState(@Req req: Request) {
-    const context = await this.repository.findByUserId('형주');
+  async currentState(@Req req: AuthenticatedRequest) {
+    const context = await this.repository.getByUserId(req.userId);
     return context.getCurrentState();
   }
 }

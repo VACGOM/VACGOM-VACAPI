@@ -11,14 +11,14 @@ export type JwtPayload = {
   exp: number;
 };
 
-export type AuthenticatedRequest = {
+export type AuthenticatedRequest = Request & {
   userId: string;
 };
 
 @JsonRpcMiddleware()
 export class AuthMiddleware implements JsonRpcMiddlewareInterface {
   async use(
-    req: Request & { userId: string },
+    req: AuthenticatedRequest,
     callback: JSONRPCCallbackType,
     next: NextFunction
   ): Promise<void> {

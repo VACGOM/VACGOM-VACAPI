@@ -25,7 +25,7 @@ import { AuthMiddleware } from './password-reset/auth.middleware';
     JsonRpcModule.forRoot({
       middlewares: [
         {
-          methods: ['password-reset.requestPasswordReset'],
+          methods: ['*.*'],
           middleware: AuthMiddleware,
         },
       ],
