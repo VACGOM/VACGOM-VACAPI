@@ -59,4 +59,10 @@ export class PasswordResetController {
     const context = await this.repository.findByUserId('형주');
     return context.changePassword();
   }
+
+  @JsonRpcMethod('getCurrentState')
+  async currentState(@Req req: Request) {
+    const context = await this.repository.findByUserId('형주');
+    return context.getCurrentState();
+  }
 }

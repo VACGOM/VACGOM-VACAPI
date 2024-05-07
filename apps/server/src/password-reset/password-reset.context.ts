@@ -26,6 +26,10 @@ export class PasswordResetContext {
     this.changeState(state);
   }
 
+  public getCurrentState(): string {
+    return this.data.stateType;
+  }
+
   public changeState(state: StateType) {
     this.state = this.states[state];
     this.data.stateType = state;
