@@ -1,12 +1,16 @@
 import { Errors } from 'io-ts';
+import { DomainException } from '../../exception/domain-exception';
+import { ErrorCode } from '../../exception/error';
 
-export class ValidationError extends Error {
+export class ValidationError extends DomainException {
   constructor(errors: Errors) {
-    super('Validation Error');
-    this.name = 'ValidationError';
+    const message = errors.flatMap((e) => {
+      return e.context.map((c) => c.key).filter((k) => k);
+    });
 
-    errors.map((error) => {
-      console.log(error.message);
+    super(ErrorCode.VALIDATION_ERROR, {
+      message: 'Validation error',
+      errorData: message,
     });
   }
 }
