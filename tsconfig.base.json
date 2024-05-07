@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@vacgom/types": ["libs/types/src/index.ts"]
+      "@vacgom/types": ["libs/types/src/index.ts"],
+      "@vacgom/vacapi-sdk": ["libs/vacapi-sdk/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
