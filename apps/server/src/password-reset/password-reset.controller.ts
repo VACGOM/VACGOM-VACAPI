@@ -78,4 +78,10 @@ export class PasswordResetController {
     const context = await this.repository.getByUserId(req.userId);
     return context.getCurrentState();
   }
+
+  @JsonRpcMethod('resetContext')
+  async resetContext(@Req req: AuthenticatedRequest) {
+    const context = await this.repository.getByUserId(req.userId);
+    await context.resetContext();
+  }
 }
