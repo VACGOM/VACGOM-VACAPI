@@ -40,15 +40,19 @@ export class SMSState extends PasswordResetState {
       }
       return true;
     } catch (e) {
-      if (
-        e instanceof DomainException &&
-        e.errorData == ErrorCode.TIMEOUT_ERROR
-      ) {
-        this.context.changeState(StateType.INITIAL);
-        await this.context.requestPasswordChange(this.context.data.requestInfo);
-        throw new DomainException(ErrorCode.TIMEOUT_ERROR, e.message);
+      if (e instanceof DomainException) {
+        if (e.errorData == ErrorCode.TIMEOUT_ERROR) {
+          this.context.changeState(StateType.INITIAL);
+          await this.context.requestPasswordChange(
+            this.context.data.requestInfo
+          );
+          throw new DomainException(ErrorCode.TIMEOUT_ERROR, e.message);
+        } else if (e.errorData == ErrorCode.DUPLICATE_REQUEST) {
+          this.context.changeState(StateType.INITIAL);
+          throw new DomainException(ErrorCode.DUPLICATE_REQUEST, e.message);
+        }
       }
-      throw new DomainException(ErrorCode.CODEF_ERROR, e.message);
+      throw e;
     }
   }
 }
