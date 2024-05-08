@@ -20,6 +20,10 @@ export abstract class PasswordResetState {
     throw new DomainException(ErrorCode.UNSUPPORTED_OPERATION);
   }
 
+  public refreshSecureNoImage(): Promise<string> {
+    throw new DomainException(ErrorCode.UNSUPPORTED_OPERATION);
+  }
+
   public changePassword(): Promise<ResetPasswordRequest> {
     throw new DomainException(ErrorCode.UNSUPPORTED_OPERATION);
   }

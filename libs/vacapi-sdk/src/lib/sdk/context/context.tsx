@@ -17,7 +17,7 @@ type PasswordResetContext = {
 };
 const VacapiPasswordResetContext = createContext<PasswordResetContext>({
   state: '',
-  refresh: async () => {
+  refresh: async (force = false) => {
     throw new Error('Not implemented');
   },
   setError: () => {
@@ -38,7 +38,7 @@ export const VacapiPasswordResetProvider: React.FC<PropsWithChildren> = ({
   const [state, setState] = useState<string>('initial');
   const vacapi = getVacapiInstance();
   const [error, setError] = useState<DomainException>();
-  const refresh = async () => {
+  const refresh = async (force = false) => {
     try {
       const response = await vacapi.getCurrentState();
       if (response) setState(response);

@@ -23,6 +23,8 @@ export function validateResponse<T extends CodefResponse<any>>(response: T): T {
       throw new DomainException(ErrorCode.DUPLICATE_REQUEST);
     case 'CF-12834':
       throw new DomainException(ErrorCode.VERIFICATION_BLOCKED);
+    case 'CF-12835':
+      throw new DomainException(ErrorCode.INVALID_INFO);
     default:
       throw new UnhandledCodefException(response);
   }

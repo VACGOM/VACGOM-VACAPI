@@ -10,6 +10,11 @@ export const ErrorCode = {
     message: '요청을 확인해주세요.',
     success: false,
   },
+  INVALID_INFO: {
+    code: 'INVALID_INFO',
+    message: '본인인증 정보가 올바르지 않습니다.',
+    success: false,
+  },
   ID_NOT_FOUND: {
     code: 'ID_NOT_FOUND',
     message: '예방접종도우미 ID를 찾을 수 없습니다.',

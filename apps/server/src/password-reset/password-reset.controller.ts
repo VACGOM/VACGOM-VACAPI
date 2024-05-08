@@ -43,6 +43,12 @@ export class PasswordResetController {
     return context.requestSecureNoImage();
   }
 
+  @JsonRpcMethod('refreshSecureNoImage')
+  async refreshSecureNoImage(@Req req: AuthenticatedRequest) {
+    const context = await this.repository.getByUserId(req.userId);
+    return context.refreshSecureNoImage();
+  }
+
   @JsonRpcMethod('inputSecureNo')
   async inputSecureNo(
     @Body body: InputSecureNoRequest,

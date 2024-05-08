@@ -23,6 +23,16 @@ export class SecureNoState extends PasswordResetState {
     return this.context.data.secureNoImage;
   }
 
+  public async refreshSecureNoImage(): Promise<string> {
+    try {
+      await this.inputSecureNo('');
+    } catch (e) {
+      // do nothing
+    }
+
+    return this.context.data.secureNoImage;
+  }
+
   public async inputSecureNo(secureNo: string): Promise<boolean> {
     try {
       const savedRequest = this.context.data.requestInfo;
@@ -54,7 +64,10 @@ export class SecureNoState extends PasswordResetState {
         throw e;
       }
 
-      if (e.errorData == ErrorCode.VERIFICATION_BLOCKED) {
+      if (
+        e.errorData == ErrorCode.VERIFICATION_BLOCKED ||
+        e.errorData == ErrorCode.INVALID_INFO
+      ) {
         this.context.changeState(StateType.INITIAL);
         throw e;
       } else if (

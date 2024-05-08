@@ -54,6 +54,10 @@ export class PasswordResetContext implements PasswordResetContextType {
     return this.operate(() => this.state.requestSecureNoImage());
   }
 
+  public async refreshSecureNoImage(): Promise<string> {
+    return this.operate(() => this.state.refreshSecureNoImage());
+  }
+
   public async inputSecureNo(request: InputSecureNoRequest): Promise<any> {
     const decoded = InputSecureNoRequest.decode(request);
     if (isLeft(decoded)) {
