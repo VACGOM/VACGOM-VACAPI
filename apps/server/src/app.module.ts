@@ -12,6 +12,7 @@ import { AuthMiddleware } from './password-reset/auth.middleware';
 import { IdempotencyMiddleware } from './idempotency/idempotency.middleware';
 import { UnhandledCodefExceptionFilter } from './codef-exception-filter';
 import { ValidationErrorFilter } from './validation-error-filter';
+import { CacheVaccinationMiddleware } from './vaccination/cache-vaccination.middleware';
 
 @Module({
   imports: [
@@ -36,6 +37,10 @@ import { ValidationErrorFilter } from './validation-error-filter';
             'password-reset.inputSecureNo',
           ],
           middleware: IdempotencyMiddleware,
+        },
+        {
+          methods: ['vaccination.getVaccinationRecords'],
+          middleware: CacheVaccinationMiddleware,
         },
       ],
     }),
