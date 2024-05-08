@@ -4,7 +4,11 @@ import { Injectable } from '@nestjs/common';
 import { NipService } from '../../nip/nip.service';
 import { DomainException } from '../../exception/domain-exception';
 import { ErrorCode } from '../../exception/error';
-import { ResetPasswordRequest, StateType } from '@vacgom/types';
+import {
+  PasswordChangeSuccessResponse,
+  ResetPasswordRequest,
+  StateType,
+} from '@vacgom/types';
 
 @Injectable()
 export class SMSState extends PasswordResetState {
@@ -19,7 +23,9 @@ export class SMSState extends PasswordResetState {
     return this.context.state.requestPasswordChange(request);
   }
 
-  public async inputSMSCode(smsCode: string): Promise<boolean> {
+  public async inputSMSCode(
+    smsCode: string
+  ): Promise<PasswordChangeSuccessResponse> {
     const savedRequest = this.context.data.requestInfo;
 
     try {
@@ -44,8 +50,13 @@ export class SMSState extends PasswordResetState {
           },
           response.result
         );
+      } else if (response.type != 'PasswordChanged') {
+        throw new DomainException(ErrorCode.PASSWORD_RESET_FAILED);
       }
-      return true;
+
+      return {
+        userId: response.userId,
+      };
     } catch (e) {
       if (e instanceof DomainException) {
         if (e.errorData == ErrorCode.TIMEOUT_ERROR) {

@@ -8,6 +8,7 @@ import { ValidationError } from './exception/ValidationError';
 import {
   InputSecureNoRequest,
   InputSMSCodeRequest,
+  PasswordChangeSuccessResponse,
   ResetPasswordRequest,
   StateType,
 } from '@vacgom/types';
@@ -72,7 +73,9 @@ export class PasswordResetContext implements PasswordResetContextType {
     return this.operate(() => this.state.inputSecureNo(decoded.right.secureNo));
   }
 
-  public async inputSMSCode(request: InputSMSCodeRequest): Promise<any> {
+  public async inputSMSCode(
+    request: InputSMSCodeRequest
+  ): Promise<PasswordChangeSuccessResponse> {
     const decoded = InputSMSCodeRequest.decode(request);
     if (isLeft(decoded)) {
       throw new ValidationError(decoded.left);

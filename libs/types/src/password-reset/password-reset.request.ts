@@ -20,3 +20,11 @@ export const InputSMSCodeRequest = t.type({
   smsCode: t.string,
 });
 export type InputSMSCodeRequest = t.TypeOf<typeof InputSMSCodeRequest>;
+
+export const PasswordChangeSuccessResponse = t.type({
+  userId: t.string,
+});
+
+export type PasswordChangeSuccessResponse = t.TypeOf<
+  typeof PasswordChangeSuccessResponse
+>;

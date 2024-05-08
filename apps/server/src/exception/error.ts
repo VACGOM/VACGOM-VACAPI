@@ -15,6 +15,11 @@ export const ErrorCode = {
     message: '본인인증 정보가 올바르지 않습니다.',
     success: false,
   },
+  PASSWORD_RESET_FAILED: {
+    code: 'PASSWORD_RESET_FAILED',
+    message: '비밀번호 변경에 실패했습니다. 다시 시도해주세요!',
+    success: false,
+  },
   ID_NOT_FOUND: {
     code: 'ID_NOT_FOUND',
     message: '예방접종도우미 ID를 찾을 수 없습니다.',

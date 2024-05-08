@@ -1,7 +1,10 @@
 import { PasswordResetContext } from './password-reset.context';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
-import { ResetPasswordRequest } from '@vacgom/types';
+import {
+  PasswordChangeSuccessResponse,
+  ResetPasswordRequest,
+} from '@vacgom/types';
 
 export abstract class PasswordResetState {
   protected context: PasswordResetContext;
@@ -32,7 +35,7 @@ export abstract class PasswordResetState {
     throw new DomainException(ErrorCode.UNSUPPORTED_OPERATION);
   }
 
-  public inputSMSCode(smsCode: string): Promise<boolean> {
+  public inputSMSCode(smsCode: string): Promise<PasswordChangeSuccessResponse> {
     throw new DomainException(ErrorCode.UNSUPPORTED_OPERATION);
   }
 
