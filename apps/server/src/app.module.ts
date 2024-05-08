@@ -10,7 +10,7 @@ import { JsonRpcModule } from './json-rpc/json-rpc.module';
 import { DomainExceptionFilter } from './exception-filter';
 import { AuthMiddleware } from './password-reset/auth.middleware';
 import { IdempotencyMiddleware } from './idempotency/idempotency.middleware';
-import { UnhandledCodefExceptionFilter } from './default-exception-filter';
+import { UnhandledCodefExceptionFilter } from './codef-exception-filter';
 
 @Module({
   imports: [
