@@ -22,21 +22,33 @@ export class SMSState extends PasswordResetState {
   public async inputSMSCode(smsCode: string): Promise<boolean> {
     const savedRequest = this.context.data.requestInfo;
 
-    const response = await this.nipService.requestPasswordReset({
-      type: 'InputSMS',
-      smsAuthNo: smsCode,
-      name: savedRequest.name,
-      identity: savedRequest.identity,
-      newPassword: savedRequest.newPassword,
-      telecom: savedRequest.telecom,
-      phoneNumber: savedRequest.phoneNumber,
-      twoWayInfo: this.context.data.twoWayInfo,
-    });
+    try {
+      const response = await this.nipService.requestPasswordReset({
+        type: 'InputSMS',
+        smsAuthNo: smsCode,
+        name: savedRequest.name,
+        identity: savedRequest.identity,
+        newPassword: savedRequest.newPassword,
+        telecom: savedRequest.telecom,
+        phoneNumber: savedRequest.phoneNumber,
+        twoWayInfo: this.context.data.twoWayInfo,
+      });
 
-    if (response.type == 'PasswordChangeFailed') {
-      this.context.changeState(StateType.REQUEST_PASSWORD_RESET);
-      throw new DomainException(ErrorCode.CODEF_ERROR, response.result);
+      if (response.type == 'PasswordChangeFailed') {
+        this.context.changeState(StateType.REQUEST_PASSWORD_RESET);
+        throw new DomainException(ErrorCode.CODEF_ERROR, response.result);
+      }
+      return true;
+    } catch (e) {
+      if (
+        e instanceof DomainException &&
+        e.errorData == ErrorCode.TIMEOUT_ERROR
+      ) {
+        this.context.changeState(StateType.INITIAL);
+        await this.context.requestPasswordChange(this.context.data.requestInfo);
+        throw new DomainException(ErrorCode.TIMEOUT_ERROR, e.message);
+      }
+      throw new DomainException(ErrorCode.CODEF_ERROR, e.message);
     }
-    return true;
   }
 }

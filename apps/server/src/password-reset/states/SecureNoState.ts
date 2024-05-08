@@ -41,6 +41,7 @@ export class SecureNoState extends PasswordResetState {
 
       if (response.type == 'SecureNo') {
         this.context.data.secureNoImage = response.secureNoImage;
+        this.context.data.twoWayInfo = response.twoWayInfo;
         await this.context.save();
 
         throw new DomainException(ErrorCode.SECURE_NO_ERROR_REFRESHED);
