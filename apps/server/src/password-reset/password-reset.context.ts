@@ -18,6 +18,7 @@ export class PasswordResetContext implements PasswordResetContextType {
   state: PasswordResetState;
 
   public data!: Context;
+  private isRemoved: boolean = false;
 
   constructor(
     private states: States,
@@ -31,6 +32,7 @@ export class PasswordResetContext implements PasswordResetContextType {
 
   public async resetContext(): Promise<void> {
     this.changeState(StateType.INITIAL);
+    this.isRemoved = true;
     await this.repository.deleteByUserId(this.data.memberId);
   }
 
@@ -96,7 +98,7 @@ export class PasswordResetContext implements PasswordResetContextType {
     try {
       return await fn();
     } finally {
-      await this.save();
+      if (!this.isRemoved) await this.save();
     }
   }
 }
