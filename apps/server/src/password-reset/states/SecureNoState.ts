@@ -54,7 +54,10 @@ export class SecureNoState extends PasswordResetState {
         throw e;
       }
 
-      if (
+      if (e.errorData == ErrorCode.VERIFICATION_BLOCKED) {
+        this.context.changeState(StateType.INITIAL);
+        throw e;
+      } else if (
         e.errorData == ErrorCode.SECURE_NO_ERROR ||
         e.errorData == ErrorCode.DUPLICATE_REQUEST ||
         e.errorData == ErrorCode.TIMEOUT_ERROR
