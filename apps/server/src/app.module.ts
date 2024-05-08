@@ -11,6 +11,7 @@ import { DomainExceptionFilter } from './exception-filter';
 import { AuthMiddleware } from './password-reset/auth.middleware';
 import { IdempotencyMiddleware } from './idempotency/idempotency.middleware';
 import { UnhandledCodefExceptionFilter } from './codef-exception-filter';
+import { ValidationErrorFilter } from './validation-error-filter';
 
 @Module({
   imports: [
@@ -39,6 +40,10 @@ import { UnhandledCodefExceptionFilter } from './codef-exception-filter';
       ],
     }),
   ],
-  providers: [DomainExceptionFilter, UnhandledCodefExceptionFilter],
+  providers: [
+    DomainExceptionFilter,
+    UnhandledCodefExceptionFilter,
+    ValidationErrorFilter,
+  ],
 })
 export class AppModule {}

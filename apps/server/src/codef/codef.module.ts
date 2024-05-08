@@ -7,6 +7,7 @@ import { PasswordService } from './password.service';
 import { ConcreteFetchMyVaccinationStrategy } from './strategies/fetch-my-vaccination/ConcreteFetchMyVaccinationStrategy';
 import { ConcreteRequestPasswordResetStrategy } from './strategies/request-reset-password/ConcreteRequestPasswordResetStrategy';
 import { Mapper } from './strategies/request-reset-password/mapper';
+import { FetchMyVaccinationMapper } from './strategies/fetch-my-vaccination/mapper';
 
 @Module({
   providers: [
@@ -24,6 +25,7 @@ import { Mapper } from './strategies/request-reset-password/mapper';
     ConcreteFetchMyVaccinationStrategy,
     ConcreteRequestPasswordResetStrategy,
     Mapper,
+    FetchMyVaccinationMapper,
   ],
   exports: [
     CodefService,

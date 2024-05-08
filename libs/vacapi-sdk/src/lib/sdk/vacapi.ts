@@ -6,6 +6,8 @@ import {
   PasswordChangeSuccessResponse,
   ResetPasswordRequest,
   StateType,
+  VaccinationRequest,
+  VaccinationResponse,
 } from '@vacgom/types';
 import {
   JSONRPCCallbackTypePlain,
@@ -56,6 +58,15 @@ export class Vacapi {
       {}
     );
     console.log('Vacapi Client Initialized');
+  }
+
+  async getVaccinationRecords(
+    request: VaccinationRequest
+  ): Promise<VaccinationResponse> {
+    const validation = VaccinationRequest.decode(request);
+    if (isLeft(validation)) throw new ValidationError(validation.left);
+
+    return this.request('vaccination.getVaccinationRecords', validation);
   }
 
   async getCurrentState(): Promise<string> {

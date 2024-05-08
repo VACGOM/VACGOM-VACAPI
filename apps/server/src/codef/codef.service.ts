@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CredentialService } from './credential.service';
 import { RequestService } from '../request/types';
-import { CodefResponse } from './types/common/codef.response';
 import { validateResponse } from './validate-response';
 import { PasswordService } from './password.service';
 import {
@@ -16,6 +15,9 @@ import {
 import { isRight } from 'fp-ts/Either';
 import { isTwoWay } from './types/reset-password/utils';
 import { isLeft } from 'fp-ts/These';
+import { CodefMyVaccinationRequest } from './types/vaccination/vaccination.request';
+import { CodefMyVaccinationResponse } from './types/vaccination/vaccination.response';
+import { ValidationError } from '../password-reset/exception/ValidationError';
 
 @Injectable()
 export class CodefService {
@@ -64,9 +66,20 @@ export class CodefService {
   }
 
   async getVaccinationRecords(
-    id: string,
-    password: string
-  ): Promise<CodefResponse<any>> {
-    return validateResponse<CodefResponse<any>>(null);
+    request: CodefMyVaccinationRequest
+  ): Promise<CodefMyVaccinationResponse> {
+    const response = await this.requestService.post<
+      CodefMyVaccinationRequest,
+      CodefMyVaccinationResponse
+    >(
+      'https://development.codef.io/v1/kr/public/hw/nip-cdc-list/my-vaccination',
+      request
+    );
+
+    validateResponse(response);
+
+    const validate = CodefMyVaccinationResponse.decode(response);
+    if (isRight(validate)) return validate.right;
+    else throw new ValidationError(validate.left);
   }
 }

@@ -1,30 +1,43 @@
 import { FetchMyVaccinationStrategy } from '../../../nip/strategies/fetchMyVaccination/FetchMyVaccinationStrategy';
 import { VaccinationRequest, VaccinationResponse } from '@vacgom/types';
 import { CodefService } from '../../codef.service';
-import { DomainException } from '../../../exception/domain-exception';
-import { ErrorCode } from '../../../exception/error';
 import { UnhandledCodefException } from '../../exceptions/UnhandledCodefException';
 import { CodefException } from '../../exceptions/CodefException';
 import { Injectable } from '@nestjs/common';
+import { FetchMyVaccinationMapper } from './mapper';
+import { PasswordService } from '../../password.service';
 
 @Injectable()
 export class ConcreteFetchMyVaccinationStrategy
   implements FetchMyVaccinationStrategy
 {
-  constructor(private codefService: CodefService) {}
+  constructor(
+    private codefService: CodefService,
+    private passwordService: PasswordService,
+    private mapper: FetchMyVaccinationMapper
+  ) {}
 
   async fetchMyVaccination(
     request: VaccinationRequest
   ): Promise<VaccinationResponse> {
     try {
-      throw new Error('Not implemented');
-    } catch (e) {
-      if (!this.isCodefException(e)) throw e;
+      const codefRequest = this.mapper.toCodefRequest(request);
+      const encryptedPassword = this.passwordService.encryptPassword(
+        codefRequest.userPassword
+      );
 
-      const extraMessage = e.result.result.extraMessage;
-      if (extraMessage.includes('비밀번호 오류 횟수가 5회를 초과'))
-        throw new DomainException(ErrorCode.PASSWORD_ERROR);
-      else throw new UnhandledCodefException(e);
+      const response = await this.codefService.getVaccinationRecords({
+        ...codefRequest,
+        userPassword: encryptedPassword,
+      });
+
+      return this.mapper.toResponse(response);
+    } catch (e) {
+      if (this.isCodefException(e)) {
+        throw new UnhandledCodefException(e);
+      } else {
+        throw e;
+      }
     }
   }
 

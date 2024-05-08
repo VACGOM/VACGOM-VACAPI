@@ -5,6 +5,6 @@ import { NipModule } from '../nip/nip.module';
 
 @Module({
   imports: [CodefModule, NipModule],
-  controllers: [VaccinationController],
+  providers: [VaccinationController],
 })
 export class VaccinationModule {}
