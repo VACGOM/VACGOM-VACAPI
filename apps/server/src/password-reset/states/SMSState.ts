@@ -54,6 +54,7 @@ export class SMSState extends PasswordResetState {
         throw new DomainException(ErrorCode.PASSWORD_RESET_FAILED);
       }
 
+      await this.context.resetContext();
       return {
         userId: response.userId,
       };
