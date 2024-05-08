@@ -1,44 +1,17 @@
-import React, {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { getVacapiInstance } from '../../../index';
 import { DomainException } from '../../../../../../apps/server/src/exception/domain-exception';
-
-type PasswordResetContext = {
-  state: string;
-  refresh: () => Promise<void>;
-  error?: DomainException;
-  setError: (error: DomainException) => void;
-  removeError: () => void;
-};
-const VacapiPasswordResetContext = createContext<PasswordResetContext>({
-  state: '',
-  refresh: async (force = false) => {
-    throw new Error('Not implemented');
-  },
-  setError: () => {
-    throw new Error('Not implemented');
-  },
-  removeError: () => {
-    throw new Error('Not implemented');
-  },
-});
-
-export const useVacapiPasswordReset = () => {
-  return useContext(VacapiPasswordResetContext);
-};
+import { VacapiPasswordResetContext } from './hooks/useVacapiPasswordResetContext';
+import { StateType } from '@vacgom/types';
 
 export const VacapiPasswordResetProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
-  const [state, setState] = useState<string>('initial');
+  const [state, setState] = useState<string>(StateType.INITIAL);
   const vacapi = getVacapiInstance();
+
   const [error, setError] = useState<DomainException>();
-  const refresh = async (force = false) => {
+  const refresh = async () => {
     try {
       const response = await vacapi.getCurrentState();
       if (response) setState(response);
@@ -50,6 +23,7 @@ export const VacapiPasswordResetProvider: React.FC<PropsWithChildren> = ({
   const removeError = () => {
     setError(undefined);
   };
+
   useEffect(() => {
     refresh();
   }, []);

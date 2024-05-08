@@ -28,3 +28,9 @@ export const PasswordChangeSuccessResponse = t.type({
 export type PasswordChangeSuccessResponse = t.TypeOf<
   typeof PasswordChangeSuccessResponse
 >;
+
+export const ChangeStateRequest = t.type({
+  state: t.string,
+});
+
+export type ChangeStateRequest = t.TypeOf<typeof ChangeStateRequest>;

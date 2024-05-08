@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button, Card, Typography } from '@mui/joy';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const PasswordChanged = () => {
   const location = useLocation();
-
+  const navigation = useNavigate();
   const state: { userId?: string } = location.state;
   if (!state) {
     return null;
@@ -25,7 +25,13 @@ export const PasswordChanged = () => {
           축하합니다. 비밀번호가 변경되었어요 !!
         </Typography>
         <Typography level={'h4'}>ID: {state.userId}</Typography>
-        <Button fullWidth={true} size={'lg'}>
+        <Button
+          fullWidth={true}
+          size={'lg'}
+          onClick={() => {
+            navigation('/password-reset');
+          }}
+        >
           감사합니다
         </Button>
       </Card>
