@@ -15,9 +15,7 @@ export class ContextMapper {
   public toContext(context: Context): PasswordResetContext {
     const requestInfo = Context.decode(context);
     if (isLeft(requestInfo)) {
-      console.log(requestInfo.left);
-
-      throw new Error();
+      return null;
     }
 
     const state = requestInfo.right.stateType as StateType;
