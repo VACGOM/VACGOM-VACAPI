@@ -160,7 +160,7 @@ export class JsonRpcService implements OnModuleInit {
       await new Promise((resolve) => {
         const next = () => {
           if (ms.length > 0) {
-            const middleware = ms.shift();
+            const middleware = ms.pop();
             const instance = this.getMiddlewareInstance(middleware);
 
             const promise = instance.use(context.req, callback, next);
