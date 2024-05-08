@@ -6,14 +6,14 @@ import { isLeft } from 'fp-ts/These';
 import { Context } from './types/context';
 import { ValidationError } from './exception/ValidationError';
 import {
-  ContextOutput,
   InputSecureNoRequest,
   InputSMSCodeRequest,
   ResetPasswordRequest,
   StateType,
 } from '@vacgom/types';
+import { PasswordResetContextType } from '../../../../libs/types/src/password-reset/context';
 
-export class PasswordResetContext {
+export class PasswordResetContext implements PasswordResetContextType {
   state: PasswordResetState;
 
   public data!: Context;
@@ -41,7 +41,7 @@ export class PasswordResetContext {
 
   public async requestPasswordChange(
     request: ResetPasswordRequest
-  ): Promise<ContextOutput<boolean>> {
+  ): Promise<boolean> {
     const decoded = ResetPasswordRequest.decode(request);
     if (isLeft(decoded)) {
       throw new ValidationError(decoded.left);
@@ -50,13 +50,11 @@ export class PasswordResetContext {
     return this.operate(() => this.state.requestPasswordChange(decoded.right));
   }
 
-  public async requestSecureNoImage(): Promise<ContextOutput<any>> {
+  public async requestSecureNoImage(): Promise<any> {
     return this.operate(() => this.state.requestSecureNoImage());
   }
 
-  public async inputSecureNo(
-    request: InputSecureNoRequest
-  ): Promise<ContextOutput<any>> {
+  public async inputSecureNo(request: InputSecureNoRequest): Promise<any> {
     const decoded = InputSecureNoRequest.decode(request);
     if (isLeft(decoded)) {
       throw new ValidationError(decoded.left);
@@ -65,9 +63,7 @@ export class PasswordResetContext {
     return this.operate(() => this.state.inputSecureNo(decoded.right.secureNo));
   }
 
-  public async inputSMSCode(
-    request: InputSMSCodeRequest
-  ): Promise<ContextOutput<any>> {
+  public async inputSMSCode(request: InputSMSCodeRequest): Promise<any> {
     const decoded = InputSMSCodeRequest.decode(request);
     if (isLeft(decoded)) {
       throw new ValidationError(decoded.left);
@@ -76,7 +72,7 @@ export class PasswordResetContext {
     return this.operate(() => this.state.inputSMSCode(decoded.right.smsCode));
   }
 
-  public async changePassword(): Promise<ContextOutput<any>> {
+  public async changePassword(): Promise<any> {
     return this.operate(() => this.state.changePassword());
   }
 
@@ -84,13 +80,9 @@ export class PasswordResetContext {
     await this.repository.save(this);
   }
 
-  private async operate<T>(fn: () => Promise<T>): Promise<ContextOutput<T>> {
+  private async operate<T>(fn: () => Promise<T>): Promise<T> {
     try {
-      const result = await fn();
-
-      return ContextOutput.success(this.data.stateType as StateType, result);
-    } catch (e) {
-      return ContextOutput.failure(this.data.stateType as StateType, e);
+      return await fn();
     } finally {
       await this.save();
     }

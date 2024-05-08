@@ -7,6 +7,7 @@ import { ContextMapper } from './mapper/mapper';
 import { Context } from './types/context';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
+import { isLeft } from 'fp-ts/These';
 
 @Injectable()
 export class RedisContextRepositoryImpl implements ContextRepository {
@@ -27,7 +28,11 @@ export class RedisContextRepositoryImpl implements ContextRepository {
   }
 
   async save(context: PasswordResetContext): Promise<void> {
-    console.log(context.data);
+    const validation = Context.decode(context);
+    if (isLeft(validation)) {
+      console.log('저장에 실패했지만 무시합니다.');
+      return;
+    }
     await this.redisClient.set(
       context.data.memberId,
       JSON.stringify(Context.encode(context.data))

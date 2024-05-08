@@ -17,7 +17,7 @@ export class ContextMapper {
     if (isLeft(requestInfo)) {
       console.log(requestInfo.left);
 
-      throw new Error('Invalid request info');
+      throw new Error();
     }
 
     const state = requestInfo.right.stateType as StateType;
