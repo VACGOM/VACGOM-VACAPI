@@ -5,6 +5,7 @@ import { NipService } from '../../nip/nip.service';
 import { DomainException } from '../../exception/domain-exception';
 import { ErrorCode } from '../../exception/error';
 import { ResetPasswordRequest, StateType } from '@vacgom/types';
+import { NipRefreshSecureNoRequest } from '../../nip/strategies/resetPassword/request';
 
 @Injectable()
 export class SecureNoState extends PasswordResetState {
@@ -24,13 +25,28 @@ export class SecureNoState extends PasswordResetState {
   }
 
   public async refreshSecureNoImage(): Promise<string> {
-    try {
-      await this.inputSecureNo('');
-    } catch (e) {
-      // do nothing
-    }
+    const savedRequest = this.context.data.requestInfo;
+    const request: NipRefreshSecureNoRequest = {
+      type: 'RefreshSecureNo',
+      secureNoRefresh: '1',
+      ...savedRequest,
+      twoWayInfo: {
+        ...this.context.data.twoWayInfo,
+      },
+    };
 
-    return this.context.data.secureNoImage;
+    const response = await this.nipService.requestPasswordReset(request);
+
+    if (response.type == 'SecureNo') {
+      this.context.data.secureNoImage = response.secureNoImage;
+      await this.context.save();
+      return response.secureNoImage;
+    } else {
+      throw new DomainException(
+        ErrorCode.SECURE_NO_ERROR,
+        '안전번호 이미지를 갱신할 수 없습니다.'
+      );
+    }
   }
 
   public async inputSecureNo(secureNo: string): Promise<boolean> {
