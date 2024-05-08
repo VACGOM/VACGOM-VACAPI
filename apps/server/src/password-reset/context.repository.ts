@@ -4,4 +4,6 @@ export interface ContextRepository {
   save(context: PasswordResetContext): Promise<void>;
 
   getByUserId(userId: string): Promise<PasswordResetContext | null>;
+
+  deleteByUserId(userId: string): Promise<void>;
 }

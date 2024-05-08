@@ -55,7 +55,7 @@ export class SMSState extends PasswordResetState {
           );
           throw new DomainException(ErrorCode.TIMEOUT_ERROR, e.message);
         } else if (e.errorData == ErrorCode.DUPLICATE_REQUEST) {
-          this.context.changeState(StateType.INITIAL);
+          await this.context.resetContext();
           throw new DomainException(ErrorCode.DUPLICATE_REQUEST, e.message);
         }
       }

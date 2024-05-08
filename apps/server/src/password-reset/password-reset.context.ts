@@ -28,6 +28,11 @@ export class PasswordResetContext implements PasswordResetContextType {
     this.changeState(state);
   }
 
+  public async resetContext(): Promise<void> {
+    this.changeState(StateType.INITIAL);
+    await this.repository.deleteByUserId(this.data.memberId);
+  }
+
   public getCurrentState(): string {
     return this.data.stateType;
   }
