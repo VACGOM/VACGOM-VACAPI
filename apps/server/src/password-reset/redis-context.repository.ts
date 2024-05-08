@@ -7,7 +7,6 @@ import { ContextMapper } from './mapper/mapper';
 import { Context } from './types/context';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
-import { isLeft } from 'fp-ts/These';
 
 @Injectable()
 export class RedisContextRepositoryImpl implements ContextRepository {
@@ -22,20 +21,21 @@ export class RedisContextRepositoryImpl implements ContextRepository {
     }
 
     const res = this.mapper.toContext(JSON.parse(data));
-    console.log('decoderes', res);
+    if (!res) {
+      throw new DomainException(ErrorCode.CHALLENGE_NOT_FOUND);
+    }
 
     return res;
   }
 
   async save(context: PasswordResetContext): Promise<void> {
-    const validation = Context.decode(context);
-    if (isLeft(validation)) {
-      console.log('저장에 실패했지만 무시합니다.');
-      return;
-    }
     await this.redisClient.set(
       context.data.memberId,
       JSON.stringify(Context.encode(context.data))
     );
+  }
+
+  async deleteByUserId(userId: string): Promise<void> {
+    await this.redisClient.del(userId);
   }
 }
