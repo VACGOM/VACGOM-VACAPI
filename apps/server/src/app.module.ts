@@ -30,7 +30,10 @@ import { UnhandledCodefExceptionFilter } from './codef-exception-filter';
           middleware: AuthMiddleware,
         },
         {
-          methods: ['*.*'],
+          methods: [
+            'password-reset.inputSMSCode',
+            'password-reset.inputSecureNo',
+          ],
           middleware: IdempotencyMiddleware,
         },
       ],
