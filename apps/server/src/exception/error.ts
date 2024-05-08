@@ -140,4 +140,9 @@ export const ErrorCode = {
     message: '본인인증이 제한되었습니다. 예방접종도우미에서 직접 처리해주세요.',
     success: false,
   },
+  NOT_MEMBER: {
+    code: 'NOT_MEMBER',
+    message: '예방접종도우미에 가입 되 어있지 않습니다.',
+    success: false,
+  },
 };

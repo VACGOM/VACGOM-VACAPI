@@ -10,6 +10,8 @@ export function validateResponse<T extends CodefResponse<any>>(response: T): T {
     case 'CF-00000':
       return response;
     case 'CF-12100':
+      if (response.result.message.includes('회원이 아닙니다'))
+        throw new DomainException(ErrorCode.NOT_MEMBER);
       throw new CodefException<T>(response);
     case 'CF-12800':
       throw new DomainException(ErrorCode.ID_NOT_FOUND);
