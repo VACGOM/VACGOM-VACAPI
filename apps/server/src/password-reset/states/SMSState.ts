@@ -29,56 +29,59 @@ export class SMSState extends PasswordResetState {
   public async inputSMSCode(
     smsCode: string
   ): Promise<PasswordChangeSuccessResponse> {
-    const savedRequest = this.context.getPayload().requestInfo;
+    const payload = this.context.getPayload();
+    const savedRequest = payload.requestInfo;
 
-    try {
-      const response = await this.nipService.requestPasswordReset({
-        type: 'InputSMS',
-        smsAuthNo: smsCode,
-        name: savedRequest.name,
-        identity: savedRequest.identity,
-        newPassword: savedRequest.newPassword,
-        telecom: savedRequest.telecom,
-        phoneNumber: savedRequest.phoneNumber,
-        twoWayInfo: this.context.getPayload().twoWayInfo,
-      });
-
-      if (response.type == 'PasswordChangeFailed') {
-        this.context.changeState(PasswordResetStateType.REQUEST_PASSWORD_RESET);
-        throw new DomainException(
-          {
-            code: ErrorCode.CODEF_ERROR.code,
-            message: response.result,
-            success: false,
-          },
-          response.result
-        );
-      } else if (response.type != 'PasswordChanged') {
-        throw new DomainException(ErrorCode.PASSWORD_RESET_FAILED);
-      }
-
-      await this.context.resetContext();
-      return {
-        userId: response.userId,
-      };
-    } catch (e) {
-      if (e instanceof DomainException) {
-        if (e.errorData == ErrorCode.TIMEOUT_ERROR) {
-          this.context.changeState(PasswordResetStateType.INITIAL);
-          await this.context.requestPasswordChange(
-            this.context.getPayload().requestInfo
-          );
-          throw new DomainException(ErrorCode.TIMEOUT_ERROR, e.message);
-        } else if (e.errorData == ErrorCode.DUPLICATE_REQUEST) {
-          await this.context.resetContext();
-          throw new DomainException(ErrorCode.DUPLICATE_REQUEST, e.message);
-        }
-      }
-      throw e;
-    }
+    return this.process(smsCode, savedRequest).catch((e) =>
+      this.handleError(e, payload)
+    );
   }
 
   getStateType(): PasswordResetStateKeys {
     return PasswordResetStateType.SMS;
+  }
+
+  private async process(smsCode: string, savedRequest: ResetPasswordRequest) {
+    const response = await this.nipService.requestPasswordReset({
+      type: 'InputSMS',
+      smsAuthNo: smsCode,
+      name: savedRequest.name,
+      identity: savedRequest.identity,
+      newPassword: savedRequest.newPassword,
+      telecom: savedRequest.telecom,
+      phoneNumber: savedRequest.phoneNumber,
+      twoWayInfo: this.context.getPayload().twoWayInfo,
+    });
+
+    if (response.type == 'PasswordChangeFailed') {
+      throw new DomainException(
+        ErrorCode.PASSWORD_RESET_FAILED,
+        response.result
+      );
+    } else if (response.type != 'PasswordChanged') {
+      throw new DomainException(ErrorCode.PASSWORD_RESET_FAILED);
+    }
+
+    await this.context.resetContext();
+    return {
+      userId: response.userId,
+    };
+  }
+
+  private async handleError(e: Error, payload: any): Promise<never> {
+    if (e instanceof DomainException) {
+      if (e.errorData == ErrorCode.TIMEOUT_ERROR) {
+        this.context.changeState(PasswordResetStateType.INITIAL);
+        await this.context.requestPasswordChange(payload.requestInfo);
+        throw e;
+      } else if (e.errorData == ErrorCode.DUPLICATE_REQUEST) {
+        await this.context.resetContext();
+        throw e;
+      } else if (e.errorData == ErrorCode.PASSWORD_RESET_FAILED) {
+        this.context.changeState(PasswordResetStateType.REQUEST_PASSWORD_RESET);
+        throw e;
+      }
+    }
+    throw e;
   }
 }
