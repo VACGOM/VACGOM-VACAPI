@@ -1,50 +1,46 @@
 import { PasswordResetState } from './password-reset.state';
-import { States } from './types/state';
-import { ContextRepository } from './context.repository';
 import { isLeft } from 'fp-ts/These';
-
-import { Context } from './types/context';
 import { ValidationError } from './exception/ValidationError';
 import {
   InputSecureNoRequest,
   InputSMSCodeRequest,
   PasswordChangeSuccessResponse,
   ResetPasswordRequest,
-  StateType,
 } from '@vacgom/types';
-import { PasswordResetContextType } from '../../../../libs/types/src/password-reset/context';
+import { Context, StateKeys } from '../context/context';
+import { PasswordResetData } from './types/passwordResetData';
 
-export class PasswordResetContext implements PasswordResetContextType {
-  state: PasswordResetState;
+export const enum PasswordResetStateType {
+  INITIAL = 'INITIAL',
+  SMS = 'SMS',
+  SECURE_NO = 'SECURE_NO',
+  REQUEST_PASSWORD_RESET = 'REQUEST_PASSWORD_RESET',
+}
 
-  public data!: Context;
+export type PasswordResetStateKeys = StateKeys<
+  [
+    PasswordResetStateType.INITIAL,
+    PasswordResetStateType.SMS,
+    PasswordResetStateType.SECURE_NO,
+    PasswordResetStateType.REQUEST_PASSWORD_RESET
+  ]
+>;
+
+export class PasswordResetContext extends Context<
+  PasswordResetData,
+  PasswordResetState,
+  PasswordResetStateKeys
+> {
   private isRemoved: boolean = false;
 
-  constructor(
-    private states: States,
-    private repository: ContextRepository,
-    state: StateType,
-    data: Context
-  ) {
-    this.data = data;
-    this.changeState(state);
-  }
-
   public async resetContext(): Promise<void> {
-    this.changeState(StateType.INITIAL);
+    this.changeState(this.states['INITIAL']);
     this.isRemoved = true;
-    await this.repository.deleteByUserId(this.data.memberId);
+    await this.repository.deleteById(this.data.payload.memberId);
   }
 
   public getCurrentState(): string {
-    return this.data.stateType;
-  }
-
-  public changeState(state: StateType) {
-    this.state = this.states[state];
-    this.data.stateType = state;
-
-    this.state.setContext(this);
+    return this.data.state.getStateType();
   }
 
   public async requestPasswordChange(

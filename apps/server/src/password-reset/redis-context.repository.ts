@@ -1,26 +1,36 @@
-import { ContextRepository } from './context.repository';
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 import * as process from 'node:process';
-import { PasswordResetContext } from './password-reset.context';
+import {
+  PasswordResetContext,
+  PasswordResetStateType,
+} from './password-reset.context';
 import { ContextMapper } from './mapper/mapper';
-import { Context } from './types/context';
+import { PasswordResetData } from './types/passwordResetData';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
+import { ContextRepository } from '../context/repository';
 
 @Injectable()
-export class RedisContextRepositoryImpl implements ContextRepository {
+export class RedisContextRepositoryImpl
+  implements ContextRepository<PasswordResetContext>
+{
   private redisClient = new Redis(process.env.REDIS_URL);
 
   constructor(private mapper: ContextMapper) {}
 
-  async getByUserId(userId: string): Promise<PasswordResetContext> {
+  async findById(userId: string): Promise<PasswordResetContext> {
     const data = await this.redisClient.get(userId);
-    if (!data) {
+    const state = await this.redisClient.get(userId + '-state');
+
+    if (!data || !state) {
       throw new DomainException(ErrorCode.CHALLENGE_NOT_FOUND);
     }
 
-    const res = this.mapper.toContext(JSON.parse(data));
+    if (!this.isValidState(state))
+      throw new DomainException(ErrorCode.CHALLENGE_NOT_FOUND);
+
+    const res = this.mapper.toContext(JSON.parse(data), state);
     if (!res) {
       throw new DomainException(ErrorCode.CHALLENGE_NOT_FOUND);
     }
@@ -30,12 +40,26 @@ export class RedisContextRepositoryImpl implements ContextRepository {
 
   async save(context: PasswordResetContext): Promise<void> {
     await this.redisClient.set(
-      context.data.memberId,
-      JSON.stringify(Context.encode(context.data))
+      context.getPayload().memberId,
+      JSON.stringify(PasswordResetData.encode(context.getPayload()))
+    );
+
+    await this.redisClient.set(
+      context.getPayload().memberId + '-state',
+      context.getState().getStateType()
     );
   }
 
-  async deleteByUserId(userId: string): Promise<void> {
+  async deleteById(userId: string): Promise<void> {
     await this.redisClient.del(userId);
+  }
+
+  private isValidState(state: string): state is PasswordResetStateType {
+    return (
+      state === PasswordResetStateType.SMS ||
+      state === PasswordResetStateType.SECURE_NO ||
+      state === PasswordResetStateType.REQUEST_PASSWORD_RESET ||
+      state === PasswordResetStateType.INITIAL
+    );
   }
 }

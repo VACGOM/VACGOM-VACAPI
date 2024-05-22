@@ -1,9 +1,8 @@
-import { JsonRpcMiddleware } from '../json-rpc/json-rpc.decorator';
-import { JsonRpcMiddlewareInterface } from '../json-rpc/json-rpc-middleware.interface';
 import { JSONRPCCallbackType, JSONRPCResultLike } from 'jayson';
 import { Request } from 'express';
 import { VaccinationCacheService } from './cache.service';
 import { AuthenticatedRequest } from '../password-reset/auth.middleware';
+import { JsonRpcMiddleware, JsonRpcMiddlewareInterface } from 'nestjs-jayson';
 
 @JsonRpcMiddleware()
 export class CacheVaccinationMiddleware implements JsonRpcMiddlewareInterface {

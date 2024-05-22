@@ -1,9 +1,8 @@
 import * as t from 'io-ts';
 import { IdentityType, TelecomType } from '@vacgom/types';
 
-export const Context = t.type({
+export const PasswordResetData = t.type({
   memberId: t.string,
-  stateType: t.string,
   secureNoImage: t.union([t.string, t.undefined]),
   requestInfo: t.type({
     identity: IdentityType,
@@ -23,4 +22,4 @@ export const Context = t.type({
   ]),
 });
 
-export type Context = t.TypeOf<typeof Context>;
+export type PasswordResetData = t.TypeOf<typeof PasswordResetData>;

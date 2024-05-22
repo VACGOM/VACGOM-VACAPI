@@ -1,9 +1,11 @@
-import { PasswordResetContext } from '../password-reset.context';
+import {
+  PasswordResetContext,
+  PasswordResetStateType,
+} from '../password-reset.context';
 import { ContextFactory } from '../context.factory';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { isLeft } from 'fp-ts/These';
-import { Context } from '../types/context';
-import { StateType } from '@vacgom/types';
+import { PasswordResetData } from '../types/passwordResetData';
 
 @Injectable()
 export class ContextMapper {
@@ -12,13 +14,15 @@ export class ContextMapper {
     private factory: ContextFactory
   ) {}
 
-  public toContext(context: Context): PasswordResetContext {
-    const requestInfo = Context.decode(context);
+  public toContext(
+    context: PasswordResetData,
+    state: PasswordResetStateType
+  ): PasswordResetContext {
+    const requestInfo = PasswordResetData.decode(context);
     if (isLeft(requestInfo)) {
       return null;
     }
 
-    const state = requestInfo.right.stateType as StateType;
     return this.factory.create(state, requestInfo.right);
   }
 }

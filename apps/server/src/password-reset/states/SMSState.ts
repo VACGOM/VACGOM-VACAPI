@@ -7,8 +7,11 @@ import { ErrorCode } from '../../exception/error';
 import {
   PasswordChangeSuccessResponse,
   ResetPasswordRequest,
-  StateType,
 } from '@vacgom/types';
+import {
+  PasswordResetStateKeys,
+  PasswordResetStateType,
+} from '../password-reset.context';
 
 @Injectable()
 export class SMSState extends PasswordResetState {
@@ -19,14 +22,14 @@ export class SMSState extends PasswordResetState {
   public async requestPasswordChange(
     request: ResetPasswordRequest
   ): Promise<boolean> {
-    this.context.changeState(StateType.INITIAL);
-    return this.context.state.requestPasswordChange(request);
+    this.context.changeState(PasswordResetStateType.INITIAL);
+    return this.context.requestPasswordChange(request);
   }
 
   public async inputSMSCode(
     smsCode: string
   ): Promise<PasswordChangeSuccessResponse> {
-    const savedRequest = this.context.data.requestInfo;
+    const savedRequest = this.context.getPayload().requestInfo;
 
     try {
       const response = await this.nipService.requestPasswordReset({
@@ -37,11 +40,11 @@ export class SMSState extends PasswordResetState {
         newPassword: savedRequest.newPassword,
         telecom: savedRequest.telecom,
         phoneNumber: savedRequest.phoneNumber,
-        twoWayInfo: this.context.data.twoWayInfo,
+        twoWayInfo: this.context.getPayload().twoWayInfo,
       });
 
       if (response.type == 'PasswordChangeFailed') {
-        this.context.changeState(StateType.REQUEST_PASSWORD_RESET);
+        this.context.changeState(PasswordResetStateType.REQUEST_PASSWORD_RESET);
         throw new DomainException(
           {
             code: ErrorCode.CODEF_ERROR.code,
@@ -61,9 +64,9 @@ export class SMSState extends PasswordResetState {
     } catch (e) {
       if (e instanceof DomainException) {
         if (e.errorData == ErrorCode.TIMEOUT_ERROR) {
-          this.context.changeState(StateType.INITIAL);
+          this.context.changeState(PasswordResetStateType.INITIAL);
           await this.context.requestPasswordChange(
-            this.context.data.requestInfo
+            this.context.getPayload().requestInfo
           );
           throw new DomainException(ErrorCode.TIMEOUT_ERROR, e.message);
         } else if (e.errorData == ErrorCode.DUPLICATE_REQUEST) {
@@ -73,5 +76,9 @@ export class SMSState extends PasswordResetState {
       }
       throw e;
     }
+  }
+
+  getStateType(): PasswordResetStateKeys {
+    return PasswordResetStateType.SMS;
   }
 }

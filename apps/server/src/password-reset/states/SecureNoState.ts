@@ -4,8 +4,12 @@ import { Injectable } from '@nestjs/common';
 import { NipService } from '../../nip/nip.service';
 import { DomainException } from '../../exception/domain-exception';
 import { ErrorCode } from '../../exception/error';
-import { ResetPasswordRequest, StateType } from '@vacgom/types';
+import { ResetPasswordRequest } from '@vacgom/types';
 import { NipRefreshSecureNoRequest } from '../../nip/strategies/resetPassword/request';
+import {
+  PasswordResetStateKeys,
+  PasswordResetStateType,
+} from '../password-reset.context';
 
 @Injectable()
 export class SecureNoState extends PasswordResetState {
@@ -16,29 +20,29 @@ export class SecureNoState extends PasswordResetState {
   public async requestPasswordChange(
     request: ResetPasswordRequest
   ): Promise<boolean> {
-    this.context.changeState(StateType.INITIAL);
-    return this.context.state.requestPasswordChange(request);
+    this.context.changeState(PasswordResetStateType.INITIAL);
+    return this.context.requestPasswordChange(request);
   }
 
   public async requestSecureNoImage(): Promise<string> {
-    return this.context.data.secureNoImage;
+    return this.context.getPayload().secureNoImage;
   }
 
   public async refreshSecureNoImage(): Promise<string> {
-    const savedRequest = this.context.data.requestInfo;
+    const savedRequest = this.context.getPayload().requestInfo;
     const request: NipRefreshSecureNoRequest = {
       type: 'RefreshSecureNo',
       secureNoRefresh: '1',
       ...savedRequest,
       twoWayInfo: {
-        ...this.context.data.twoWayInfo,
+        ...this.context.getPayload().twoWayInfo,
       },
     };
 
     const response = await this.nipService.requestPasswordReset(request);
 
     if (response.type == 'SecureNo') {
-      this.context.data.secureNoImage = response.secureNoImage;
+      this.context.getPayload().secureNoImage = response.secureNoImage;
       await this.context.save();
       return response.secureNoImage;
     } else {
@@ -51,7 +55,7 @@ export class SecureNoState extends PasswordResetState {
 
   public async inputSecureNo(secureNo: string): Promise<boolean> {
     try {
-      const savedRequest = this.context.data.requestInfo;
+      const savedRequest = this.context.getPayload().requestInfo;
 
       const response = await this.nipService.requestPasswordReset({
         type: 'InputSecureNo',
@@ -62,17 +66,17 @@ export class SecureNoState extends PasswordResetState {
         newPassword: savedRequest.newPassword,
         telecom: savedRequest.telecom,
         phoneNumber: savedRequest.phoneNumber,
-        twoWayInfo: this.context.data.twoWayInfo,
+        twoWayInfo: this.context.getPayload().twoWayInfo,
       });
 
       if (response.type == 'SecureNo') {
-        this.context.data.secureNoImage = response.secureNoImage;
-        this.context.data.twoWayInfo = response.twoWayInfo;
+        this.context.getPayload().secureNoImage = response.secureNoImage;
+        this.context.getPayload().twoWayInfo = response.twoWayInfo;
         await this.context.save();
 
         throw new DomainException(ErrorCode.SECURE_NO_ERROR_REFRESHED);
       } else if (response.type == 'SMS') {
-        this.context.changeState(StateType.SMS);
+        this.context.changeState(PasswordResetStateType.SMS);
         return true;
       }
     } catch (e) {
@@ -91,8 +95,10 @@ export class SecureNoState extends PasswordResetState {
         e.errorData == ErrorCode.DUPLICATE_REQUEST ||
         e.errorData == ErrorCode.TIMEOUT_ERROR
       ) {
-        this.context.changeState(StateType.INITIAL);
-        await this.context.requestPasswordChange(this.context.data.requestInfo);
+        this.context.changeState(PasswordResetStateType.INITIAL);
+        await this.context.requestPasswordChange(
+          this.context.getPayload().requestInfo
+        );
         await this.context.requestSecureNoImage();
         await this.context.save();
 
@@ -101,5 +107,9 @@ export class SecureNoState extends PasswordResetState {
         throw e;
       }
     }
+  }
+
+  getStateType(): PasswordResetStateKeys {
+    return PasswordResetStateType.SECURE_NO;
   }
 }

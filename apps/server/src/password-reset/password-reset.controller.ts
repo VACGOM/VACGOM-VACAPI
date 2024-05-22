@@ -1,11 +1,6 @@
 import { ContextFactory } from './context.factory';
 import { RedisContextRepositoryImpl } from './redis-context.repository';
-import {
-  Body,
-  JsonRpcController,
-  JsonRpcMethod,
-  Req,
-} from '../json-rpc/json-rpc.decorator';
+
 import { Injectable } from '@nestjs/common';
 import { isLeft } from 'fp-ts/These';
 import { DomainException } from '../exception/domain-exception';
@@ -16,6 +11,7 @@ import {
   InputSMSCodeRequest,
   ResetPasswordRequest,
 } from '@vacgom/types';
+import { Body, JsonRpcController, JsonRpcMethod, Req } from 'nestjs-jayson';
 
 @Injectable()
 @JsonRpcController('password-reset', [])
@@ -39,13 +35,13 @@ export class PasswordResetController {
 
   @JsonRpcMethod('requestSecureNoImage')
   async requestSecureNoImage(@Req req: AuthenticatedRequest) {
-    const context = await this.repository.getByUserId(req.userId);
+    const context = await this.repository.findById(req.userId);
     return context.requestSecureNoImage();
   }
 
   @JsonRpcMethod('refreshSecureNoImage')
   async refreshSecureNoImage(@Req req: AuthenticatedRequest) {
-    const context = await this.repository.getByUserId(req.userId);
+    const context = await this.repository.findById(req.userId);
     return context.refreshSecureNoImage();
   }
 
@@ -54,7 +50,7 @@ export class PasswordResetController {
     @Body body: InputSecureNoRequest,
     @Req req: AuthenticatedRequest
   ) {
-    const context = await this.repository.getByUserId(req.userId);
+    const context = await this.repository.findById(req.userId);
     return context.inputSecureNo(body);
   }
 
@@ -63,25 +59,25 @@ export class PasswordResetController {
     @Body body: InputSMSCodeRequest,
     @Req req: AuthenticatedRequest
   ) {
-    const context = await this.repository.getByUserId(req.userId);
+    const context = await this.repository.findById(req.userId);
     return context.inputSMSCode(body);
   }
 
   @JsonRpcMethod('changePassword')
   async changePassword(@Req req: AuthenticatedRequest) {
-    const context = await this.repository.getByUserId(req.userId);
+    const context = await this.repository.findById(req.userId);
     return context.changePassword();
   }
 
   @JsonRpcMethod('currentState')
   async currentState(@Req req: AuthenticatedRequest) {
-    const context = await this.repository.getByUserId(req.userId);
+    const context = await this.repository.findById(req.userId);
     return context.getCurrentState();
   }
 
   @JsonRpcMethod('resetContext')
   async resetContext(@Req req: AuthenticatedRequest) {
-    const context = await this.repository.getByUserId(req.userId);
+    const context = await this.repository.findById(req.userId);
     await context.resetContext();
   }
 }

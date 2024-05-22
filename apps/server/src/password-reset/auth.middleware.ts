@@ -1,10 +1,9 @@
 import { NextFunction, Request } from 'express';
-import { JsonRpcMiddlewareInterface } from '../json-rpc/json-rpc-middleware.interface';
 import { JSONRPCCallbackType } from 'jayson';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
 import jwt from 'jsonwebtoken';
-import { JsonRpcMiddleware } from '../json-rpc/json-rpc.decorator';
+import { JsonRpcMiddleware, JsonRpcMiddlewareInterface } from 'nestjs-jayson';
 
 export type JwtPayload = {
   sub: string;

@@ -1,45 +1,57 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PasswordResetContext } from './password-reset.context';
+import {
+  PasswordResetContext,
+  PasswordResetStateKeys,
+  PasswordResetStateType,
+} from './password-reset.context';
 import { InitialState } from './states/InitialState';
 import { SecureNoState } from './states/SecureNoState';
 import { RequestPasswordReset } from './states/RequestPasswordReset';
-import { States } from './types/state';
-import { ContextRepository } from './context.repository';
-import { Context } from './types/context';
+import { PasswordResetData } from './types/passwordResetData';
 import { SMSState } from './states/SMSState';
-import { StateType } from '@vacgom/types';
+import { PasswordResetState } from './password-reset.state';
+import { StateMap } from '../context/context';
+import { ContextRepository } from '../context/repository';
+import { Data } from '../context/data';
 
 @Injectable()
 export class ContextFactory {
-  readonly states: States;
+  private states: StateMap<PasswordResetStateKeys, PasswordResetState>;
 
   constructor(
     @Inject('ContextRepository')
-    private repository: ContextRepository,
+    private repository: ContextRepository<PasswordResetContext>,
     private initialState: InitialState,
     private requestPasswordReset: RequestPasswordReset,
     private secureNoState: SecureNoState,
     private smsState: SMSState
   ) {
-    this.states = {
-      [StateType.INITIAL]: this.initialState,
-      [StateType.REQUEST_PASSWORD_RESET]: this.requestPasswordReset,
-      [StateType.SECURE_NO]: this.secureNoState,
-      [StateType.SMS]: this.smsState,
-    };
+    this.states = new Map([
+      [PasswordResetStateType.INITIAL, this.initialState],
+      [PasswordResetStateType.SMS, this.smsState],
+      [PasswordResetStateType.SECURE_NO, this.secureNoState],
+      [
+        PasswordResetStateType.REQUEST_PASSWORD_RESET,
+        this.requestPasswordReset,
+      ],
+    ]);
   }
 
   public create(
-    state = StateType.INITIAL,
-    data: Context
+    state = PasswordResetStateType.INITIAL,
+    payload: PasswordResetData
   ): PasswordResetContext {
-    return new PasswordResetContext(this.states, this.repository, state, data);
+    const data: Data<PasswordResetState, PasswordResetData> = {
+      state: this.states[state],
+      payload: payload,
+    };
+
+    return new PasswordResetContext(this.states, this.repository, data);
   }
 
   public createInitialState(memberId: string): PasswordResetContext {
-    return this.create(StateType.INITIAL, {
+    return this.create(PasswordResetStateType.INITIAL, {
       memberId: memberId,
-      stateType: StateType.INITIAL.toString(),
       requestInfo: null,
       secureNoImage: null,
       twoWayInfo: null,

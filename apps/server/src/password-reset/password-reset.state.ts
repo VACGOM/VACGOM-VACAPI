@@ -1,12 +1,18 @@
-import { PasswordResetContext } from './password-reset.context';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
 import {
   PasswordChangeSuccessResponse,
   ResetPasswordRequest,
 } from '@vacgom/types';
+import { State } from '../context/state';
+import {
+  PasswordResetContext,
+  PasswordResetStateKeys,
+} from './password-reset.context';
 
-export abstract class PasswordResetState {
+export abstract class PasswordResetState
+  implements State<PasswordResetContext, PasswordResetStateKeys>
+{
   protected context: PasswordResetContext;
 
   public requestPasswordChange(
@@ -42,4 +48,6 @@ export abstract class PasswordResetState {
   public setContext(context: PasswordResetContext) {
     this.context = context;
   }
+
+  abstract getStateType(): PasswordResetStateKeys;
 }

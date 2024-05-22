@@ -1,7 +1,6 @@
-import { JsonRpcExceptionFilter } from './json-rpc/json-rpc.decorator';
-import { ExceptionFilter } from './json-rpc/exceptions/exception-filter';
 import { JSONRPCErrorLike } from 'jayson';
 import { ValidationError } from './password-reset/exception/ValidationError';
+import { ExceptionFilter, JsonRpcExceptionFilter } from 'nestjs-jayson';
 
 @JsonRpcExceptionFilter(ValidationError)
 export class ValidationErrorFilter implements ExceptionFilter<ValidationError> {

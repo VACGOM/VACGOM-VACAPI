@@ -1,7 +1,11 @@
 import { PasswordResetState } from '../password-reset.state';
 
 import { Injectable } from '@nestjs/common';
-import { ResetPasswordRequest, StateType } from '@vacgom/types';
+import { ResetPasswordRequest } from '@vacgom/types';
+import {
+  PasswordResetStateKeys,
+  PasswordResetStateType,
+} from '../password-reset.context';
 
 @Injectable()
 export class RequestPasswordReset extends PasswordResetState {
@@ -12,16 +16,16 @@ export class RequestPasswordReset extends PasswordResetState {
   public async requestPasswordChange(
     request: ResetPasswordRequest
   ): Promise<boolean> {
-    this.context.changeState(StateType.INITIAL);
-    return this.context.state.requestPasswordChange(request);
+    this.context.changeState(PasswordResetStateType.INITIAL);
+    return this.context.requestPasswordChange(request);
   }
 
   public async requestSecureNoImage(): Promise<string> {
-    if (this.context.data.secureNoImage == undefined) {
-      throw new Error('안전번호 이미지가 없습니다.');
-    }
+    this.context.changeState(PasswordResetStateType.SECURE_NO);
+    return this.context.getPayload().secureNoImage;
+  }
 
-    this.context.changeState(StateType.SECURE_NO);
-    return this.context.data.secureNoImage;
+  public getStateType(): PasswordResetStateKeys {
+    return PasswordResetStateType.REQUEST_PASSWORD_RESET;
   }
 }
