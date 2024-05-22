@@ -1,11 +1,10 @@
 import { IdempotencyService } from './idempotency.service';
 import { DomainException } from '../exception/domain-exception';
 import { ErrorCode } from '../exception/error';
-import { JsonRpcMiddleware } from '../json-rpc/json-rpc.decorator';
-import { JsonRpcMiddlewareInterface } from '../json-rpc/json-rpc-middleware.interface';
 import * as crypto from 'node:crypto';
 import { JSONRPCCallbackType, JSONRPCRequest } from 'jayson';
 import { Request } from 'express';
+import { JsonRpcMiddleware, JsonRpcMiddlewareInterface } from 'nestjs-jayson';
 
 @JsonRpcMiddleware()
 export class IdempotencyMiddleware implements JsonRpcMiddlewareInterface {

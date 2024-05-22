@@ -1,16 +1,12 @@
 import { VaccinationRequest, VaccinationResponse } from '@vacgom/types';
 import { NipService } from '../nip/nip.service';
-import {
-  Body,
-  JsonRpcController,
-  JsonRpcMethod,
-  Req,
-} from '../json-rpc/json-rpc.decorator';
+
 import { Injectable } from '@nestjs/common';
 import { isLeft } from 'fp-ts/These';
 import { ValidationError } from '../password-reset/exception/ValidationError';
 import { VaccinationCacheService } from './cache.service';
 import { AuthenticatedRequest } from '../password-reset/auth.middleware';
+import { Body, JsonRpcController, JsonRpcMethod, Req } from 'nestjs-jayson';
 
 @Injectable()
 @JsonRpcController('vaccination', [])
