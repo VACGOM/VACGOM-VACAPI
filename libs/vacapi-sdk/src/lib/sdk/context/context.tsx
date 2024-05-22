@@ -1,13 +1,13 @@
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { getVacapiInstance } from '../../../index';
 import { DomainException } from '../../../../../../apps/server/src/exception/domain-exception';
-import { VacapiPasswordResetContext } from './hooks/useVacapiPasswordResetContext';
-import { StateType } from '@vacgom/types';
+import { VacapiPasswordResetContext } from './hooks';
+import { PasswordResetStateType } from '../../../../../../apps/server/src/password-reset/password-reset.context';
 
 export const VacapiPasswordResetProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
-  const [state, setState] = useState<string>(StateType.INITIAL);
+  const [state, setState] = useState<string>(PasswordResetStateType.INITIAL);
   const vacapi = getVacapiInstance();
 
   const [error, setError] = useState<DomainException>();

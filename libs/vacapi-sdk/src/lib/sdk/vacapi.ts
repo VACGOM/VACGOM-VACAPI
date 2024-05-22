@@ -5,7 +5,6 @@ import {
   JsonRpcDomainException,
   PasswordChangeSuccessResponse,
   ResetPasswordRequest,
-  StateType,
   VaccinationRequest,
   VaccinationResponse,
 } from '@vacgom/types';
@@ -20,6 +19,7 @@ import {
 import { isLeft, isRight } from 'fp-ts/Either';
 import { DomainException } from '../../../../../apps/server/src/exception/domain-exception';
 import { ValidationError } from '../../../../../apps/server/src/password-reset/exception/ValidationError';
+import { PasswordResetStateType } from '../../../../../apps/server/src/password-reset/password-reset.context';
 
 const jaysonBrowserClient = require('jayson/lib/client/browser');
 
@@ -73,7 +73,7 @@ export class Vacapi {
     try {
       return await this.request('password-reset.currentState', {});
     } catch (e) {
-      return StateType.INITIAL;
+      return PasswordResetStateType.INITIAL;
     }
   }
 

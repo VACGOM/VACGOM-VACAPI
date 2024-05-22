@@ -1,4 +1,3 @@
-import { StateType } from '@vacgom/types';
 import { RequestPasswordReset } from './requestPasswordReset';
 import React, { useRef } from 'react';
 import { SecureNo } from './secureNo';
@@ -6,6 +5,7 @@ import { SMS } from './sms';
 import { useVacapiPasswordReset } from '@vacgom/vacapi-sdk';
 import { ErrorBoundary } from 'react-error-boundary';
 import { DomainException } from '../../../../../server/src/exception/domain-exception';
+import { PasswordResetStateType } from '../../../../../server/src/password-reset/password-reset.context';
 
 export const PasswordReset = () => {
   const state = useVacapiPasswordReset();
@@ -13,11 +13,11 @@ export const PasswordReset = () => {
 
   let component;
   if (
-    state.state == StateType.INITIAL ||
-    state.state == StateType.REQUEST_PASSWORD_RESET
+    state.state == PasswordResetStateType.INITIAL ||
+    state.state == PasswordResetStateType.REQUEST_PASSWORD_RESET
   ) {
     component = <RequestPasswordReset />;
-  } else if (state.state == StateType.SECURE_NO) {
+  } else if (state.state == PasswordResetStateType.SECURE_NO) {
     component = <SecureNo />;
   } else if (state.state == 'sms') {
     component = <SMS />;
