@@ -42,7 +42,7 @@ export class ContextFactory {
     payload: PasswordResetData
   ): PasswordResetContext {
     const data: Data<PasswordResetState, PasswordResetData> = {
-      state: this.states[state],
+      state: this.states.get(state),
       payload: payload,
     };
 

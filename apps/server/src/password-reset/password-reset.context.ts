@@ -58,16 +58,18 @@ export class PasswordResetContext extends Context<
     if (isLeft(decoded)) {
       throw new ValidationError(decoded.left);
     }
-
-    return this.operate(() => this.state.requestPasswordChange(decoded.right));
+    
+    return this.operate(() =>
+      this.getState().requestPasswordChange(decoded.right)
+    );
   }
 
   public async requestSecureNoImage(): Promise<any> {
-    return this.operate(() => this.state.requestSecureNoImage());
+    return this.operate(() => this.getState().requestSecureNoImage());
   }
 
   public async refreshSecureNoImage(): Promise<string> {
-    return this.operate(() => this.state.refreshSecureNoImage());
+    return this.operate(() => this.getState().refreshSecureNoImage());
   }
 
   public async inputSecureNo(request: InputSecureNoRequest): Promise<any> {
@@ -76,7 +78,9 @@ export class PasswordResetContext extends Context<
       throw new ValidationError(decoded.left);
     }
 
-    return this.operate(() => this.state.inputSecureNo(decoded.right.secureNo));
+    return this.operate(() =>
+      this.getState().inputSecureNo(decoded.right.secureNo)
+    );
   }
 
   public async inputSMSCode(
@@ -87,11 +91,13 @@ export class PasswordResetContext extends Context<
       throw new ValidationError(decoded.left);
     }
 
-    return this.operate(() => this.state.inputSMSCode(decoded.right.smsCode));
+    return this.operate(() =>
+      this.getState().inputSMSCode(decoded.right.smsCode)
+    );
   }
 
   public async changePassword(): Promise<any> {
-    return this.operate(() => this.state.changePassword());
+    return this.operate(() => this.getState().changePassword());
   }
 
   public async save(): Promise<void> {

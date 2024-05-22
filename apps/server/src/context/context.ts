@@ -11,16 +11,21 @@ export abstract class Context<
   S extends State<Context<P, S, K>, K>,
   K extends StateKeys<any>
 > {
-  protected state: S;
-
   protected constructor(
     protected states: StateMap<K, S>,
     protected repository: ContextRepository<Context<P, S, K>>,
     protected data: Data<S, P>
-  ) {}
+  ) {
+    this.changeState(data.state.getStateType());
+  }
 
   public changeState(state: K): void {
-    this.data.state = this.states.get(state);
+    const instance = this.states.get(state);
+    if (!instance) {
+      throw new Error(`State ${state} not found`);
+    }
+
+    this.data.state = instance;
     this.data.state.setContext(this);
   }
 

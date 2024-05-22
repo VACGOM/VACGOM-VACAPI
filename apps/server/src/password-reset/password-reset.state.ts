@@ -13,7 +13,7 @@ import {
 export abstract class PasswordResetState
   implements State<PasswordResetContext, PasswordResetStateKeys>
 {
-  protected context: PasswordResetContext;
+  protected context?: PasswordResetContext;
 
   public requestPasswordChange(
     request: ResetPasswordRequest
