@@ -33,8 +33,6 @@ export class PasswordResetContext extends Context<
   PasswordResetState,
   PasswordResetStateKeys
 > {
-  private isRemoved: boolean = false;
-
   constructor(
     states: Map<PasswordResetStateKeys, PasswordResetState>,
     repository: ContextRepository<PasswordResetContext>,
@@ -44,8 +42,8 @@ export class PasswordResetContext extends Context<
   }
 
   public async resetContext(): Promise<void> {
-    this.changeState(this.states['INITIAL']);
-    this.isRemoved = true;
+    this.changeState(PasswordResetStateType.INITIAL);
+    this.data.payload.isRemoved = true;
     await this.repository.deleteById(this.data.payload.memberId);
   }
 
@@ -104,7 +102,7 @@ export class PasswordResetContext extends Context<
     try {
       return await fn();
     } finally {
-      if (!this.isRemoved) await this.save();
+      if (!this.data.payload.isRemoved) await this.save();
     }
   }
 }
