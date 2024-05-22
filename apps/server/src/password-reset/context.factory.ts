@@ -51,6 +51,7 @@ export class ContextFactory {
 
   public createInitialState(memberId: string): PasswordResetContext {
     return this.create(PasswordResetStateType.INITIAL, {
+      isRemoved: false,
       memberId: memberId,
       requestInfo: null,
       secureNoImage: null,
