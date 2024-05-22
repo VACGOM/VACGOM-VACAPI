@@ -29,87 +29,97 @@ export class SecureNoState extends PasswordResetState {
   }
 
   public async refreshSecureNoImage(): Promise<string> {
-    const savedRequest = this.context.getPayload().requestInfo;
-    const request: NipRefreshSecureNoRequest = {
-      type: 'RefreshSecureNo',
-      secureNoRefresh: '1',
-      ...savedRequest,
-      twoWayInfo: {
-        ...this.context.getPayload().twoWayInfo,
-      },
-    };
+    const response = await this.nipService.requestPasswordReset(
+      this.buildSecureNoRequest()
+    );
 
-    const response = await this.nipService.requestPasswordReset(request);
-
-    if (response.type == 'SecureNo') {
-      this.context.getPayload().secureNoImage = response.secureNoImage;
-      await this.context.save();
-      return response.secureNoImage;
-    } else {
+    if (response.type != 'SecureNo') {
       throw new DomainException(
         ErrorCode.SECURE_NO_ERROR,
         '안전번호 이미지를 갱신할 수 없습니다.'
       );
     }
+
+    this.context.setPayload({
+      ...this.context.getPayload(),
+      secureNoImage: response.secureNoImage,
+      twoWayInfo: response.twoWayInfo,
+    });
+
+    return response.secureNoImage;
   }
 
   public async inputSecureNo(secureNo: string): Promise<boolean> {
-    try {
-      const savedRequest = this.context.getPayload().requestInfo;
-
-      const response = await this.nipService.requestPasswordReset({
-        type: 'InputSecureNo',
-        secureNo: secureNo,
-        secureNoRefresh: '0',
-        name: savedRequest.name,
-        identity: savedRequest.identity,
-        newPassword: savedRequest.newPassword,
-        telecom: savedRequest.telecom,
-        phoneNumber: savedRequest.phoneNumber,
-        twoWayInfo: this.context.getPayload().twoWayInfo,
-      });
-
-      if (response.type == 'SecureNo') {
-        this.context.getPayload().secureNoImage = response.secureNoImage;
-        this.context.getPayload().twoWayInfo = response.twoWayInfo;
-        await this.context.save();
-
-        throw new DomainException(ErrorCode.SECURE_NO_ERROR_REFRESHED);
-      } else if (response.type == 'SMS') {
-        this.context.changeState(PasswordResetStateType.SMS);
-        return true;
-      }
-    } catch (e) {
-      if (!(e instanceof DomainException)) {
-        throw e;
-      }
-
-      if (
-        e.errorData == ErrorCode.VERIFICATION_BLOCKED ||
-        e.errorData == ErrorCode.INVALID_INFO
-      ) {
-        await this.context.resetContext();
-        throw e;
-      } else if (
-        e.errorData == ErrorCode.SECURE_NO_ERROR ||
-        e.errorData == ErrorCode.DUPLICATE_REQUEST ||
-        e.errorData == ErrorCode.TIMEOUT_ERROR
-      ) {
-        this.context.changeState(PasswordResetStateType.INITIAL);
-        await this.context.requestPasswordChange(
-          this.context.getPayload().requestInfo
-        );
-        await this.context.requestSecureNoImage();
-        await this.context.save();
-
-        throw new DomainException(ErrorCode.SECURE_NO_ERROR_REFRESHED);
-      } else {
-        throw e;
-      }
-    }
+    return this.process(secureNo).catch((e) => this.handleError(e));
   }
 
   getStateType(): PasswordResetStateKeys {
     return PasswordResetStateType.SECURE_NO;
+  }
+
+  private async process(secureNo: string): Promise<boolean> {
+    const savedRequest = this.context.getPayload().requestInfo;
+
+    const response = await this.nipService.requestPasswordReset({
+      type: 'InputSecureNo',
+      secureNo: secureNo,
+      secureNoRefresh: '0',
+      name: savedRequest.name,
+      identity: savedRequest.identity,
+      newPassword: savedRequest.newPassword,
+      telecom: savedRequest.telecom,
+      phoneNumber: savedRequest.phoneNumber,
+      twoWayInfo: this.context.getPayload().twoWayInfo,
+    });
+
+    if (response.type == 'SecureNo') {
+      this.context.setPayload({
+        ...this.context.getPayload(),
+        secureNoImage: response.secureNoImage,
+        twoWayInfo: response.twoWayInfo,
+      });
+      await this.context.save();
+
+      throw new DomainException(ErrorCode.SECURE_NO_ERROR_REFRESHED);
+    } else if (response.type == 'SMS') {
+      this.context.changeState(PasswordResetStateType.SMS);
+      return true;
+    }
+  }
+
+  private async handleError(e: Error): Promise<never> {
+    if (!(e instanceof DomainException)) {
+      throw e;
+    }
+    const payload = this.context.getPayload();
+
+    switch (e.errorData) {
+      case ErrorCode.VERIFICATION_BLOCKED:
+      case ErrorCode.INVALID_INFO:
+        await this.context.resetContext();
+        throw e;
+      case ErrorCode.SECURE_NO_ERROR:
+      case ErrorCode.DUPLICATE_REQUEST:
+      case ErrorCode.TIMEOUT_ERROR:
+        await this.context.resetContext();
+        await this.context.requestPasswordChange(payload.requestInfo);
+        await this.context.requestSecureNoImage();
+        await this.context.save();
+
+        throw new DomainException(ErrorCode.SECURE_NO_ERROR_REFRESHED);
+      default:
+        throw e;
+    }
+  }
+
+  private buildSecureNoRequest(): NipRefreshSecureNoRequest {
+    return {
+      type: 'RefreshSecureNo',
+      secureNoRefresh: '1',
+      ...this.context.getPayload().requestInfo,
+      twoWayInfo: {
+        ...this.context.getPayload().twoWayInfo,
+      },
+    };
   }
 }
