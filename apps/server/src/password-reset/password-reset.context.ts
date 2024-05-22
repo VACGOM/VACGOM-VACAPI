@@ -9,6 +9,8 @@ import {
 } from '@vacgom/types';
 import { Context, StateKeys } from '../context/context';
 import { PasswordResetData } from './types/passwordResetData';
+import { ContextRepository } from '../context/repository';
+import { Data } from '../context/data';
 
 export const enum PasswordResetStateType {
   INITIAL = 'INITIAL',
@@ -32,6 +34,14 @@ export class PasswordResetContext extends Context<
   PasswordResetStateKeys
 > {
   private isRemoved: boolean = false;
+
+  constructor(
+    states: Map<PasswordResetStateKeys, PasswordResetState>,
+    repository: ContextRepository<PasswordResetContext>,
+    data: Data<PasswordResetState, PasswordResetData>
+  ) {
+    super(states, repository, data);
+  }
 
   public async resetContext(): Promise<void> {
     this.changeState(this.states['INITIAL']);

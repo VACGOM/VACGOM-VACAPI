@@ -13,7 +13,7 @@ export abstract class Context<
 > {
   protected state: S;
 
-  public constructor(
+  protected constructor(
     protected states: StateMap<K, S>,
     protected repository: ContextRepository<Context<P, S, K>>,
     protected data: Data<S, P>
