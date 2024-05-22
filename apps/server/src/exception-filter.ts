@@ -1,7 +1,6 @@
 import { DomainException } from './exception/domain-exception';
-import { JsonRpcExceptionFilter } from './json-rpc/json-rpc.decorator';
-import { ExceptionFilter } from './json-rpc/exceptions/exception-filter';
-import { JsonRpcDomainException } from '../../../libs/types/src/exceptions/json-rpc-domain-exception';
+import { JsonRpcDomainException } from '@vacgom/types';
+import { ExceptionFilter, JsonRpcExceptionFilter } from 'nestjs-jayson';
 
 @JsonRpcExceptionFilter(DomainException)
 export class DomainExceptionFilter implements ExceptionFilter<DomainException> {
@@ -14,7 +13,7 @@ export class DomainExceptionFilter implements ExceptionFilter<DomainException> {
         data: exception.data,
       },
     };
-    
+
     callback(error);
   }
 }

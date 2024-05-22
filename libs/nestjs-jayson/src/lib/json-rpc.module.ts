@@ -9,7 +9,7 @@ import {
 import { DiscoveryModule } from '@nestjs/core';
 import { JsonRpcService } from './json-rpc.service';
 
-import { JsonRpcExceptionHandler } from './exceptions/exception-handler';
+import { JsonRpcExceptionHandler } from './exceptions';
 import { MiddlewareManager } from './middleware-manager';
 import { JsonRpcMiddlewareInterface } from './json-rpc-middleware.interface';
 import { JsonRpcServerMiddleware } from './middleware';

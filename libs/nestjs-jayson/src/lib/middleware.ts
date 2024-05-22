@@ -13,9 +13,9 @@ export class JsonRpcServerMiddleware implements NestMiddleware {
 
     const server = this.jsonService.getServer();
 
-    server.call(req.body, context, function (err, result) {
-      if (err) return res.send(err);
-      res.send(result || {});
+    server.call(req.body, context, function (err, result): void {
+      if (err) res.send(err);
+      else res.send(result || {});
     });
   }
 }

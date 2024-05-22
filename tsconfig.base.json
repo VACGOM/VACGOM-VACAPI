@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@vacgom/types": ["libs/types/src/index.ts"],
-      "@vacgom/vacapi-sdk": ["libs/vacapi-sdk/src/index.ts"]
+      "@vacgom/vacapi-sdk": ["libs/vacapi-sdk/src/index.ts"],
+      "nestjs-jayson": ["libs/nestjs-jayson/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

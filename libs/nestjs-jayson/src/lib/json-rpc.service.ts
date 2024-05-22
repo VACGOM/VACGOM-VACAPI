@@ -17,10 +17,8 @@ import {
   RequestContext,
 } from './json-rpc.decorator';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { ExceptionFilter } from './exceptions/exception-filter';
-import { JsonRpcExceptionHandler } from './exceptions/exception-handler';
+import { ExceptionFilter, JsonRpcExceptionHandler } from './exceptions';
 import { JsonRpcMiddlewareInterface } from './json-rpc-middleware.interface';
-import { AuthMiddleware } from '../password-reset/auth.middleware';
 import { MiddlewareManager } from './middleware-manager';
 
 @Injectable()
@@ -69,7 +67,7 @@ export class JsonRpcService implements OnModuleInit {
                 instance,
                 methodName,
                 `${controllerName}.${methodName}`,
-                [new AuthMiddleware()]
+                []
               );
               this.logger.log(
                 `Registered method ${controllerName}.${methodName}`,
@@ -109,7 +107,7 @@ export class JsonRpcService implements OnModuleInit {
   }
 
   private buildParam(params: JsonRpcParam[], requestContext: RequestContext) {
-    const args = [];
+    const args: any[] = [];
 
     params.forEach((param) => {
       if (param.type === 'REQ') {
@@ -161,6 +159,8 @@ export class JsonRpcService implements OnModuleInit {
         const next = () => {
           if (ms.length > 0) {
             const middleware = ms.pop();
+            if (!middleware) return resolve(true);
+
             const instance = this.getMiddlewareInstance(middleware);
 
             const promise = instance.use(context.req, callback, next);
