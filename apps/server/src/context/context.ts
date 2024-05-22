@@ -25,7 +25,11 @@ export abstract class Context<
   }
 
   getPayload(): P {
-    return this.data.payload;
+    return { ...this.data.payload };
+  }
+
+  setPayload(payload: P): void {
+    this.data.payload = payload;
   }
 
   getState(): S {

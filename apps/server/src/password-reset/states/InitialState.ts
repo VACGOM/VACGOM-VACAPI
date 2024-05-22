@@ -18,7 +18,7 @@ export class InitialState extends PasswordResetState {
   public async requestPasswordChange(
     request: ResetPasswordRequest
   ): Promise<boolean> {
-    this.context.getPayload().requestInfo = request;
+    const payload = this.context.getPayload();
 
     const response = await this.nipService.requestPasswordReset({
       type: 'RequestResetPassword',
@@ -32,10 +32,14 @@ export class InitialState extends PasswordResetState {
     if (response.type != 'SecureNo')
       throw new DomainException(ErrorCode.UNSUPPORTED_OPERATION);
 
-    this.context.getPayload().secureNoImage = response.secureNoImage;
-    this.context.getPayload().twoWayInfo = response.twoWayInfo;
-
     this.context.changeState(PasswordResetStateType.SECURE_NO);
+    this.context.setPayload({
+      ...payload,
+      requestInfo: request,
+      secureNoImage: response.secureNoImage,
+      twoWayInfo: response.twoWayInfo,
+    });
+
     return true;
   }
 
