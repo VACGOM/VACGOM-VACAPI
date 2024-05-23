@@ -52,7 +52,7 @@ export class CodefService {
       if (response.data.method === 'secureNo') {
         const result = CodefSecureNoResponse.decode(response);
         if (isLeft(result)) {
-          console.log('Invalid response', result.left);
+          throw new ValidationError(result.left);
         }
         if (isRight(result)) return result.right;
       } else if (response.data.method === 'smsAuthNo') {

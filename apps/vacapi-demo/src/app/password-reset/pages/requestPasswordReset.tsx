@@ -130,7 +130,6 @@ export const RequestPasswordReset: React.FC = () => {
                 if (e instanceof DomainException) setError(e.message);
                 if (e instanceof InvalidTelecomStringException)
                   setError(e.message);
-                console.log(e);
               }
             }}
           >

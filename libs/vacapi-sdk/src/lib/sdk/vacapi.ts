@@ -49,7 +49,6 @@ export class Vacapi {
 
           callback(null, json);
         } catch (e) {
-          console.log('요건 요청 에러');
           if (e instanceof Error) {
             callback(e);
           }
@@ -57,7 +56,6 @@ export class Vacapi {
       },
       {}
     );
-    console.log('Vacapi Client Initialized');
   }
 
   async getVaccinationRecords(

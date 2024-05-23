@@ -22,7 +22,6 @@ export class ConcreteRequestPasswordResetStrategy
     const codefRequest = this.mapper.toCodefRequest(request);
     const response = await this.codefService.resetPassword(codefRequest);
 
-    console.log('Response', response);
     return this.mapper.toNipResponse(response);
   }
 }

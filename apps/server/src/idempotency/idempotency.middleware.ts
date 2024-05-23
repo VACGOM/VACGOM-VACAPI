@@ -21,7 +21,6 @@ export class IdempotencyMiddleware implements JsonRpcMiddlewareInterface {
     );
 
     if (!result) {
-      console.log('Duplicated request');
       throw new DomainException(ErrorCode.DUPLICATED_REQUEST);
     }
   }

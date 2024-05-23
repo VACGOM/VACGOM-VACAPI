@@ -94,7 +94,6 @@ export class Mapper {
   toNipResponse<T extends CodefResetPasswordResponse>(
     response: T
   ): NipResetPasswordResponse {
-    console.log(response);
     if (isTwoWay(response)) {
       if (response.data.method === 'secureNo') {
         return {
