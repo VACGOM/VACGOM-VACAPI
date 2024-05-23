@@ -16,9 +16,21 @@ export class CodefRequestService implements RequestService {
       minTime: 200,
     });
     const meter = metrics.getMeter('codef-request-queue');
-    meter.createObservableGauge('gauge').addCallback((result) => {
-      result.observe(this.limiter.counts().QUEUED);
-    });
+    meter
+      .createObservableGauge('queued', {
+        description: 'Queued Jobs',
+      })
+      .addCallback((result) => {
+        result.observe(this.limiter.counts().QUEUED);
+      });
+
+    meter
+      .createObservableGauge('running', {
+        description: 'Running jobs',
+      })
+      .addCallback((result) => {
+        result.observe(this.limiter.counts().RUNNING);
+      });
 
     this.axiosInstance = axios.create({
       validateStatus: () => true,
