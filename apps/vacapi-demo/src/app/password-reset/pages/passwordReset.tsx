@@ -19,7 +19,7 @@ export const PasswordReset = () => {
     component = <RequestPasswordReset />;
   } else if (state.state == PasswordResetStateType.SECURE_NO) {
     component = <SecureNo />;
-  } else if (state.state == 'sms') {
+  } else if (state.state == PasswordResetStateType.SMS) {
     component = <SMS />;
   } else {
     component = <RequestPasswordReset />;
