@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { DomainException } from '../../../../../../../apps/server/src/exception/domain-exception';
+import { DomainException } from '@vacgom/types';
 
 type PasswordResetContext = {
   state: string;

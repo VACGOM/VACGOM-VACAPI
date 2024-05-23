@@ -10,7 +10,7 @@ import {
 } from '@mui/joy';
 import { getVacapiInstance, useVacapiPasswordReset } from '@vacgom/vacapi-sdk';
 import { Identity, Telecom } from '@vacgom/types';
-import { DomainException } from '../../../../../server/src/exception/domain-exception';
+import { DomainException } from '../../../../../../libs/types/src/exceptions/domain-exception';
 import { IdentityException } from '../../../../../../libs/types/src/models/common/identity/exceptions/IdentityException';
 import { InvalidTelecomStringException } from '../../../../../../libs/types/src/models/common/telecom/exception';
 

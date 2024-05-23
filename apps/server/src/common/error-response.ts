@@ -1,5 +1,5 @@
 import { BaseResponse } from '@vacgom/types';
-import { ErrorData } from '../exception/error';
+import { ErrorData } from '../../../../libs/types/src/exceptions/error';
 
 export class ErrorResponse extends BaseResponse<ErrorData> {
   static of(errorData: ErrorData, message: string): ErrorResponse {

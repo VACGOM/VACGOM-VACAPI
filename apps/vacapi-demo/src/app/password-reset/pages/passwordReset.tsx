@@ -2,10 +2,12 @@ import { RequestPasswordReset } from './requestPasswordReset';
 import React, { useRef } from 'react';
 import { SecureNo } from './secureNo';
 import { SMS } from './sms';
-import { useVacapiPasswordReset } from '@vacgom/vacapi-sdk';
+import {
+  PasswordResetStateType,
+  useVacapiPasswordReset,
+} from '@vacgom/vacapi-sdk';
 import { ErrorBoundary } from 'react-error-boundary';
-import { DomainException } from '../../../../../server/src/exception/domain-exception';
-import { PasswordResetStateType } from '../../../../../server/src/password-reset/password-reset.context';
+import { DomainException } from '@vacgom/types';
 
 export const PasswordReset = () => {
   const state = useVacapiPasswordReset();

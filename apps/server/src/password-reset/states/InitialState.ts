@@ -1,8 +1,8 @@
 import { PasswordResetState } from '../password-reset.state';
 import { NipService } from '../../nip/nip.service';
 import { Injectable } from '@nestjs/common';
-import { DomainException } from '../../exception/domain-exception';
-import { ErrorCode } from '../../exception/error';
+import { DomainException } from '../../../../../libs/types/src/exceptions/domain-exception';
+import { ErrorCode } from '../../../../../libs/types/src/exceptions/error';
 import { ResetPasswordRequest } from '@vacgom/types';
 import {
   PasswordResetStateKeys,

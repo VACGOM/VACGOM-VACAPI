@@ -4,10 +4,11 @@ import {
   SEMRESATTRS_SERVICE_NAME,
   SEMRESATTRS_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
 
 export function initTelemetry() {
   const sdk = new NodeSDK({
@@ -28,8 +29,10 @@ export function initTelemetry() {
     traceExporter: new OTLPTraceExporter({
       url: 'http://127.0.0.1:14317',
     }),
-    metricReader: new PrometheusExporter({
-      port: 9464,
+    metricReader: new PeriodicExportingMetricReader({
+      exporter: new OTLPMetricExporter({
+        url: 'http://127.0.0.1:14317',
+      }),
     }),
   });
 

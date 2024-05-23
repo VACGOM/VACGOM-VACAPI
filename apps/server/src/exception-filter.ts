@@ -1,4 +1,4 @@
-import { DomainException } from './exception/domain-exception';
+import { DomainException } from '../../../libs/types/src/exceptions/domain-exception';
 import { JsonRpcDomainException } from '@vacgom/types';
 import { ExceptionFilter, JsonRpcExceptionFilter } from 'nestjs-jayson';
 

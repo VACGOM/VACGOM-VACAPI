@@ -1,6 +1,6 @@
 import { IdempotencyService } from './idempotency.service';
-import { DomainException } from '../exception/domain-exception';
-import { ErrorCode } from '../exception/error';
+import { DomainException } from '../../../../libs/types/src/exceptions/domain-exception';
+import { ErrorCode } from '../../../../libs/types/src/exceptions/error';
 import * as crypto from 'node:crypto';
 import { JSONRPCCallbackType, JSONRPCRequest } from 'jayson';
 import { Request } from 'express';

@@ -1,7 +1,7 @@
 import { CodefResponse } from './types/common/codef.response';
 import { CodefException } from './exceptions/CodefException';
-import { DomainException } from '../exception/domain-exception';
-import { ErrorCode } from '../exception/error';
+import { DomainException } from '../../../../libs/types/src/exceptions/domain-exception';
+import { ErrorCode } from '../../../../libs/types/src/exceptions/error';
 import { UnhandledCodefException } from './exceptions/UnhandledCodefException';
 
 export function validateResponse<T extends CodefResponse<any>>(response: T): T {

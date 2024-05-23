@@ -1,6 +1,5 @@
 import { Errors } from 'io-ts';
-import { DomainException } from '../../exception/domain-exception';
-import { ErrorCode } from '../../exception/error';
+import { DomainException, ErrorCode } from '@vacgom/types';
 
 export class ValidationError extends DomainException {
   constructor(errors: Errors) {

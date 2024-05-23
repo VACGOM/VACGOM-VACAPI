@@ -90,7 +90,6 @@
     "bottleneck": "^2.19.5",
     "class-transformer": "^0.5.1",
     "fp-ts": "^2.16.5",
-    "instrumentaion-jayson": "^0.0.1",
     "io-ts": "^2.2.21",
     "ioredis": "^5.4.1",
     "jayson": "^4.1.0",
@@ -105,8 +104,5 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0"
-  },
-  "nx": {
-    "includedScripts": []
   }
 }

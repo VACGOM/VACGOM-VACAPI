@@ -3,8 +3,8 @@ import { RedisContextRepositoryImpl } from './redis-context.repository';
 
 import { Injectable } from '@nestjs/common';
 import { isLeft } from 'fp-ts/These';
-import { DomainException } from '../exception/domain-exception';
-import { ErrorCode } from '../exception/error';
+import { DomainException } from '../../../../libs/types/src/exceptions/domain-exception';
+import { ErrorCode } from '../../../../libs/types/src/exceptions/error';
 import { AuthenticatedRequest } from './auth.middleware';
 import {
   InputSecureNoRequest,
@@ -72,6 +72,8 @@ export class PasswordResetController {
   @JsonRpcMethod('currentState')
   async currentState(@Req req: AuthenticatedRequest) {
     const context = await this.repository.findById(req.userId);
+    console.log('currentState', context.getCurrentState());
+
     return context.getCurrentState();
   }
 

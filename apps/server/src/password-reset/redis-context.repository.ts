@@ -7,8 +7,8 @@ import {
 } from './password-reset.context';
 import { ContextMapper } from './mapper/mapper';
 import { PasswordResetData } from './types/passwordResetData';
-import { DomainException } from '../exception/domain-exception';
-import { ErrorCode } from '../exception/error';
+import { DomainException } from '../../../../libs/types/src/exceptions/domain-exception';
+import { ErrorCode } from '../../../../libs/types/src/exceptions/error';
 import { ContextRepository } from '../context/repository';
 
 @Injectable()

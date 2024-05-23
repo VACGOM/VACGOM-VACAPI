@@ -1,5 +1,6 @@
 import ClientBrowser from 'jayson/lib/client/browser';
 import {
+  DomainException,
   InputSecureNoRequest,
   InputSMSCodeRequest,
   JsonRpcDomainException,
@@ -17,9 +18,7 @@ import {
   RequestParamsLike,
 } from 'jayson';
 import { isLeft, isRight } from 'fp-ts/Either';
-import { DomainException } from '../../../../../apps/server/src/exception/domain-exception';
-import { ValidationError } from '../../../../../apps/server/src/password-reset/exception/ValidationError';
-import { PasswordResetStateType } from '../../../../../apps/server/src/password-reset/password-reset.context';
+import { PasswordResetStateType } from './context/types';
 
 const jaysonBrowserClient = require('jayson/lib/client/browser');
 
@@ -62,7 +61,7 @@ export class Vacapi {
     request: VaccinationRequest
   ): Promise<VaccinationResponse> {
     const validation = VaccinationRequest.decode(request);
-    if (isLeft(validation)) throw new ValidationError(validation.left);
+    if (isLeft(validation)) throw new Error('');
 
     return this.request('vaccination.getVaccinationRecords', validation);
   }
@@ -83,7 +82,7 @@ export class Vacapi {
 
     const validation = PasswordChangeSuccessResponse.decode(response);
     if (isLeft(validation)) {
-      throw new ValidationError(validation.left);
+      throw new Error('validation error');
     }
 
     return validation.right;
@@ -101,7 +100,7 @@ export class Vacapi {
   async requestPasswordChange(request: ResetPasswordRequest): Promise<boolean> {
     const validate = ResetPasswordRequest.decode(request);
     if (isLeft(validate)) {
-      throw new ValidationError(validate.left);
+      throw new Error('Validation error');
     }
 
     const req = ResetPasswordRequest.encode(request);

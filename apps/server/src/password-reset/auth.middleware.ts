@@ -1,7 +1,7 @@
 import { NextFunction, Request } from 'express';
 import { JSONRPCCallbackType } from 'jayson';
-import { DomainException } from '../exception/domain-exception';
-import { ErrorCode } from '../exception/error';
+import { DomainException } from '../../../../libs/types/src/exceptions/domain-exception';
+import { ErrorCode } from '../../../../libs/types/src/exceptions/error';
 import jwt from 'jsonwebtoken';
 import { JsonRpcMiddleware, JsonRpcMiddlewareInterface } from 'nestjs-jayson';
 

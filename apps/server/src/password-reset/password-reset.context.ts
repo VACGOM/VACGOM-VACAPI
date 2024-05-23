@@ -9,7 +9,7 @@ import {
 } from '@vacgom/types';
 import { Context, StateKeys } from '../context/context';
 import { PasswordResetData } from './types/passwordResetData';
-import { ContextRepository } from '../context/repository';
+import { ContextRepository, PersistMethod } from '../context/repository';
 import { Data } from '../context/data';
 
 export const enum PasswordResetStateType {
@@ -51,6 +51,7 @@ export class PasswordResetContext extends Context<
     return this.data.state.getStateType();
   }
 
+  @PersistMethod
   public async requestPasswordChange(
     request: ResetPasswordRequest
   ): Promise<boolean> {
@@ -58,31 +59,31 @@ export class PasswordResetContext extends Context<
     if (isLeft(decoded)) {
       throw new ValidationError(decoded.left);
     }
-    
-    return this.operate(() =>
-      this.getState().requestPasswordChange(decoded.right)
-    );
+
+    return this.getState().requestPasswordChange(decoded.right);
   }
 
+  @PersistMethod
   public async requestSecureNoImage(): Promise<any> {
-    return this.operate(() => this.getState().requestSecureNoImage());
+    return this.getState().requestSecureNoImage();
   }
 
+  @PersistMethod
   public async refreshSecureNoImage(): Promise<string> {
-    return this.operate(() => this.getState().refreshSecureNoImage());
+    return this.getState().refreshSecureNoImage();
   }
 
+  @PersistMethod
   public async inputSecureNo(request: InputSecureNoRequest): Promise<any> {
     const decoded = InputSecureNoRequest.decode(request);
     if (isLeft(decoded)) {
       throw new ValidationError(decoded.left);
     }
 
-    return this.operate(() =>
-      this.getState().inputSecureNo(decoded.right.secureNo)
-    );
+    return this.getState().inputSecureNo(decoded.right.secureNo);
   }
 
+  @PersistMethod
   public async inputSMSCode(
     request: InputSMSCodeRequest
   ): Promise<PasswordChangeSuccessResponse> {
@@ -91,24 +92,15 @@ export class PasswordResetContext extends Context<
       throw new ValidationError(decoded.left);
     }
 
-    return this.operate(() =>
-      this.getState().inputSMSCode(decoded.right.smsCode)
-    );
+    return this.getState().inputSMSCode(decoded.right.smsCode);
   }
 
+  @PersistMethod
   public async changePassword(): Promise<any> {
-    return this.operate(() => this.getState().changePassword());
+    return this.getState().changePassword();
   }
 
   public async save(): Promise<void> {
     await this.repository.save(this);
-  }
-
-  private async operate<T>(fn: () => Promise<T>): Promise<T> {
-    try {
-      return await fn();
-    } finally {
-      if (!this.data.payload.isRemoved) await this.save();
-    }
   }
 }
