@@ -4,8 +4,10 @@ import {
   SEMRESATTRS_SERVICE_NAME,
   SEMRESATTRS_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
+import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 
 export function initTelemetry() {
   const sdk = new NodeSDK({
@@ -13,7 +15,19 @@ export function initTelemetry() {
       [SEMRESATTRS_SERVICE_NAME]: 'vacapi',
       [SEMRESATTRS_SERVICE_VERSION]: '1.0',
     }),
-    instrumentations: [getNodeAutoInstrumentations()],
+    instrumentations: [
+      new HttpInstrumentation(),
+      new ExpressInstrumentation({
+        spanNameHook: (req, name) => {
+          if (req.request.body.jsonrpc)
+            return `${req.route} - ${req.request.body.method}`;
+          return `${req.route} - ${name}`;
+        },
+      }),
+    ],
+    traceExporter: new OTLPTraceExporter({
+      url: 'http://127.0.0.1:14317',
+    }),
     metricReader: new PrometheusExporter({
       port: 9464,
     }),

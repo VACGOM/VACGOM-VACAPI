@@ -1,0 +1,28 @@
+logging {
+  level  = "debug"
+  format = "logfmt"
+}
+
+otelcol.receiver.otlp "example" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  output {
+    traces = [otelcol.processor.batch.tempo.input]
+  }
+}
+
+otelcol.processor.batch "tempo" {
+  output {
+    traces  = [otelcol.exporter.otlp.default.input]
+  }
+}
+
+otelcol.exporter.otlp "default" {
+  client {
+    endpoint = "http://tempo:4317"
+    tls {
+      insecure = true
+    }
+  }
+}

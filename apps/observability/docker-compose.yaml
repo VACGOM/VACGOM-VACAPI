@@ -1,0 +1,57 @@
+volumes:
+  grafana: { }
+networks:
+  observability: {
+    driver: bridge
+  }
+services:
+  alloy:
+    image: grafana/alloy
+    ports:
+      - "12347:12345"
+      - "14317:4317"
+    volumes:
+      - "./alloy/config.alloy:/etc/alloy/config.alloy"
+    command: [
+      "run",
+      "--server.http.listen-addr=0.0.0.0:12345",
+      "--stability.level=public-preview",
+      "/etc/alloy/config.alloy",
+    ]
+    networks:
+      - observability
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - "grafana:/var/lib/grafana"
+    environment:
+      - GF_FEATURE_TOGGLES_ENABLE=flameGraph traceqlSearch traceQLStreaming correlations metricsSummary traceqlEditor traceToMetrics traceToProfiles datatrails
+      - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    networks:
+      - observability
+  tempo:
+    image: grafana/tempo
+    ports:
+      - "3200:3200"
+      - "4317:4317"
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - "./tempo/tempo.yaml:/etc/tempo.yaml"
+    networks:
+      - observability
+  loki:
+    image: grafana/loki
+    ports:
+      - "3100:3100"
+    command: [ "-config.file=/etc/loki-local-config.yaml" ]
+    volumes:
+      - ./loki:/tmp/loki/
+      - "./loki-local.yaml:/etc/loki-local-config.yaml"
+    user: "10001:10001"
+    networks:
+      - observability

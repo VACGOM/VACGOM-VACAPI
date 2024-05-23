@@ -3,6 +3,7 @@ import Bottleneck from 'bottleneck';
 import { CredentialService } from './credential.service';
 import axios, { AxiosInstance } from 'axios';
 import { RequestService } from '../request/types';
+import * as opentelemetry from '@opentelemetry/api';
 import { metrics } from '@opentelemetry/api';
 
 @Injectable()
@@ -55,14 +56,23 @@ export class CodefRequestService implements RequestService {
   }
 
   public post<T>(url: string, data: any): Promise<T> {
-    return this.limiter.schedule(async () => {
-      const response = await this.axiosInstance.post<T>(url, data, {
-        headers: {
-          Authorization: `Bearer ${await this.credentialService.getAccessToken()}`,
-        },
-      });
+    const tracer = opentelemetry.trace.getTracer('codef-request-service');
+    return tracer.startActiveSpan('post', async (span) => {
+      const response = await this.limiter.schedule(async () => {
+        const response = await this.axiosInstance.post<T>(url, data, {
+          headers: {
+            Authorization: `Bearer ${await this.credentialService.getAccessToken()}`,
+          },
+        });
 
-      return response.data;
+        return response.data;
+      });
+      span.setAttribute('url', url);
+      span.setAttribute('data', JSON.stringify(data));
+      span.setAttribute('response', JSON.stringify(response));
+      span.end();
+
+      return response;
     });
   }
 }
