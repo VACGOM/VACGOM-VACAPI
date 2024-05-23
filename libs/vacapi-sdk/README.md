@@ -1,7 +1,17 @@
 # vacapi-sdk
 
-This library was generated with [Nx](https://nx.dev).
+## initialize vacapi sdk instance
 
-## Running unit tests
+```typescript
+initVacapi(
+  'http://localhost:3000/json-rpc',
+  'user access token'
+);
+```
 
-Run `nx test vacapi-sdk` to execute the unit tests via [Jest](https://jestjs.io).
+## retrieve vacgom sdk instance
+
+```typescript
+const vacapi = getVacapiInstance();
+```
+
