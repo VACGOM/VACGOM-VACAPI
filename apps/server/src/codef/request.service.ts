@@ -3,6 +3,7 @@ import Bottleneck from 'bottleneck';
 import { CredentialService } from './credential.service';
 import axios, { AxiosInstance } from 'axios';
 import { RequestService } from '../request/types';
+import { metrics } from '@opentelemetry/api';
 
 @Injectable()
 export class CodefRequestService implements RequestService {
@@ -13,6 +14,10 @@ export class CodefRequestService implements RequestService {
     this.limiter = new Bottleneck({
       maxConcurrent: 5,
       minTime: 200,
+    });
+    const meter = metrics.getMeter('codef-request-queue');
+    meter.createObservableGauge('gauge').addCallback((result) => {
+      result.observe(this.limiter.counts().QUEUED);
     });
 
     this.axiosInstance = axios.create({
@@ -45,7 +50,6 @@ export class CodefRequestService implements RequestService {
         },
       });
 
-      console.log(data, response.data, response.data);
       return response.data;
     });
   }
