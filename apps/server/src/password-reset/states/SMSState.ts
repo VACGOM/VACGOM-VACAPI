@@ -69,19 +69,19 @@ export class SMSState extends PasswordResetState {
   }
 
   private async handleError(e: Error, payload: any): Promise<never> {
-    if (e instanceof DomainException) {
-      if (e.errorData == ErrorCode.TIMEOUT_ERROR) {
-        this.context.changeState(PasswordResetStateType.INITIAL);
-        await this.context.requestPasswordChange(payload.requestInfo);
-        throw e;
-      } else if (e.errorData == ErrorCode.DUPLICATE_REQUEST) {
-        await this.context.resetContext();
-        throw e;
-      } else if (e.errorData == ErrorCode.PASSWORD_RESET_FAILED) {
-        this.context.changeState(PasswordResetStateType.REQUEST_PASSWORD_RESET);
-        throw e;
-      }
+    if (!(e instanceof DomainException)) {
+      throw e;
     }
+
+    if (e.errorData == ErrorCode.TIMEOUT_ERROR) {
+      this.context.changeState(PasswordResetStateType.INITIAL);
+      await this.context.requestPasswordChange(payload.requestInfo);
+    } else if (e.errorData == ErrorCode.DUPLICATE_REQUEST) {
+      await this.context.resetContext();
+    } else if (e.errorData == ErrorCode.PASSWORD_RESET_FAILED) {
+      this.context.changeState(PasswordResetStateType.REQUEST_PASSWORD_RESET);
+    }
+
     throw e;
   }
 }
